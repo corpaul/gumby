@@ -95,9 +95,9 @@ probe begin {
 }
 
 probe end {
-	foreach ([funcname] in totalWrite)
+	foreach ([funcname] in totalTime)
 	{
-		printf("%d,CPU,0,%s,0,0,%d\n", gettimeofday_us(), funcname, totalWrite[funcname] );
+		printf("%d,CPU,0,%s,0,0,%d\n", gettimeofday_us(), funcname, totalTime[funcname] );
 	}
 }
 
