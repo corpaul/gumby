@@ -42,12 +42,12 @@ probe python.function.return
 	if(i[tid()] > 0)
 	{
 		execTime =  gettimeofday_us()-times[tid(), funcname];
-		
+		bt = getPyBacktrace(tid());
 		foreach ([tid, i2] in ioWriteCounter)
 		{
 			if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
 			{
-				bt = getPyBacktrace(tid());
+				
 				printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
 
 			}
