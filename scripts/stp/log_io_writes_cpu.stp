@@ -99,6 +99,7 @@ probe end {
 	{
 		printf("%d,CPU,0,%s,0,0,%d\n", gettimeofday_us(), funcname, totalWrite[funcname] );
 	}
+}
 
 /*
 probe timer.s(600)
