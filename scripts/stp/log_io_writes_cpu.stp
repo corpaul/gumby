@@ -1,4 +1,4 @@
-global backtrace, ioWriteCounter, filehandles, times, doesIO, calls, totalTime;
+global backtrace, ioWriteCounter, filehandles, times, doesIO, totalTime;
 global i;
 
 global filesWritten;
@@ -33,7 +33,6 @@ probe python.function.entry
 	//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s (%d  %d)", filename, lineno, funcname, tid(), i[tid()]);
 	//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s", filename, lineno, funcname);
 	backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname);
-	calls[funcname] <<< 1
 	times[tid(), funcname] = gettimeofday_us();
 	
 	doesIO[tid(), i[tid()]] = 0;
