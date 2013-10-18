@@ -1,26 +1,31 @@
-global backtrace, ioWriteCounter, filehandles, times, doesIO, totalTime;
+global backtrace;
+global ioWriteCounter, filehandles, times; /* doesIO,*/
+global totalTime;
 global i;
-
+global index;
 global filesWritten;
+global inLib;
+
 function getPyBacktrace(currentTid)
 {
 	pyBacktrace = "";
-	index = 0;
+	/*index = 0;*/
 	foreach ([tid, i2-] in backtrace) {
-		if(index < 20 & tid == currentTid)
+		if(@count(index) < 10 & tid == currentTid)
 		{
-			if(isinstr(backtrace[tid, i2], "/home/user/src/tribler/Tribler/"))
-				str = substr(backtrace[tid, i2], 30, strlen(backtrace[tid, i2]));
-			else
-				str = backtrace[tid, i2];
+			str = backtrace[tid, i2];
 
 
-			if(isinstr(str, "/home/user/python-src/virtualenv-attempt/inst/"))
-				str = substr(str, 45, strlen(str));
+		/*	if(isinstr(str, "/home/user/python-src/virtualenv-attempt/inst/"))
+				str = substr(str, 45, strlen(str)); */
 
-			pyBacktrace = sprintf("%s<-%s (%d)", pyBacktrace, str, doesIO[tid, i2]);
-			//pyBacktrace = sprintf("%s<-%s", pyBacktrace, str);
-			index += 1;
+			pyBacktrace = sprintf("%s<-%s", pyBacktrace, str);
+			index <<< 1;
+		}
+		else
+		{
+			delete index;
+			break;
 		}
 	}
 	return pyBacktrace;
@@ -28,41 +33,47 @@ function getPyBacktrace(currentTid)
 
 
 probe python.function.entry
-{
-	i[tid()] += 1
-	//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s (%d  %d)", filename, lineno, funcname, tid(), i[tid()]);
-	//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s", filename, lineno, funcname);
-	backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname);
-	times[tid(), funcname] = gettimeofday_us();
+{	
+	if(!isinstr(filename, "lib/python"))
+	{
 	
-	doesIO[tid(), i[tid()]] = 0;
+		i[tid()] += 1
+		//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s (%d  %d)", filename, lineno, funcname, tid(), i[tid()]);
+		//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s", filename, lineno, funcname);
+		backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname); 
+		times[tid(), funcname] = gettimeofday_us();
+	}
+	/*doesIO[tid(), i[tid()]] = 0;*/
 }
 
 probe python.function.return
 {
-	if(i[tid()] > 0)
+	if(!isinstr(filename, "lib/python"))
 	{
-		execTime =  gettimeofday_us()-times[tid(), funcname];
-		bt = getPyBacktrace(tid());
-		foreach ([tid, i2] in ioWriteCounter)
+		if(i[tid()] > 0)
 		{
-			if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
+			execTime =  gettimeofday_us()-times[tid(), funcname];
+			bt = getPyBacktrace(tid());
+	/*		bt = sprintf("%s:%s", filename, funcname); */
+			foreach ([tid, i2] in ioWriteCounter)
 			{
+				if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
+				{
 				
-				printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
+					printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
 
-			}
+				}
 
-
-		}
+			}	
 		/* printf("%d,CPU,0,%s,0,%s,%d\n", gettimeofday_us(), bt, task_execname(pid2task(pid())), execTime );*/
-		totalTime[funcname] <<< execTime
+			totalTime[bt] <<< execTime  
 		
-		delete times[tid(), funcname];
-		delete ioWriteCounter[tid(), i[tid()]];
-		delete backtrace[tid(), i[tid()]];
-		i[tid()] -= 1
-	}
+			delete times[tid(), funcname];
+			delete ioWriteCounter[tid(), i[tid()]];
+			delete backtrace[tid(), i[tid()]];
+			i[tid()] -= 1
+		}
+	}	
 
 }
 
@@ -76,7 +87,7 @@ probe syscall.open.return
 
 probe syscall.write.return {
 	if ($return>0) {
-		doesIO[tid(), i[tid()]] = 1;
+		/* doesIO[tid(), i[tid()]] = 1; */
 		ioWriteCounter[tid(), i[tid()]] += $return;
 
 	}
@@ -93,17 +104,18 @@ probe begin {
 	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\"\n");
 }
 
-probe end {
+probe timer.s(60){
 	foreach ([funcname] in totalTime)
 	{
-		printf("%d,CPU,0,%s,0,0,%d\n", gettimeofday_us(), funcname, @avg(totalTime[funcname]) );
+		printf("%d,CPU,0,%s,0,0,%d,%d,%d\n", gettimeofday_us(), funcname, @avg(totalTime[funcname]), @count(totalTime[funcname]), @sum(totalTime[funcname]) ); 
 	}
+	delete totalTime;
 }
 
 /*
-probe timer.s(600)
+probe timer.s(120)
 {
-	exit()
-}*/
-
+	delete output;
+}
+*/
 
