@@ -101,7 +101,7 @@ probe syscall.read.return {
 }
 */
 probe begin {
-	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\","CALLS","TOTALTIME"\n");
+	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\",\"CALLS\",\"TOTALTIME\"\n");
 }
 
 probe timer.s(60){
