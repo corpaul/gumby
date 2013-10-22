@@ -51,6 +51,7 @@ probe python.function.return
 	{
 		if(i[tid()] > 0)
 		{
+			printf("TASK_UTIME: %d", task_utime());
 			execTime =  task_utime()-times[tid(), funcname];
 			bt = getPyBacktrace(tid());
 	/*		bt = sprintf("%s:%s", filename, funcname); */
