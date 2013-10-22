@@ -60,7 +60,7 @@ probe python.function.return
 				if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
 				{
 
-					printf("%d,WRITE,%s,%s,%d,%s,%d,xx,xx\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
+					printf("%d,WRITE,%s,%s,%d,%s,1\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())) );
 
 				}
 
@@ -101,13 +101,13 @@ probe syscall.read.return {
 }
 */
 probe begin {
-	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\",\"CALLS\",\"TOTALTIME\"\n");
+	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"VALUE\",\"PROCESS\",\"CALLS\"\n");
 }
 
 probe timer.s(60){
 	foreach ([funcname] in totalTime)
 	{
-		printf("%d,CPU,xx,%s,xx,xx,%d,%d,%d\n", gettimeofday_us(), funcname, @avg(totalTime[funcname]), @count(totalTime[funcname]), @sum(totalTime[funcname]) );
+		printf("%d,CPU,xx,%s,%d,xx,%d\n", gettimeofday_us(), funcname, @avg(totalTime[funcname]), @count(totalTime[funcname]) );
 	}
 	delete totalTime;
 }
