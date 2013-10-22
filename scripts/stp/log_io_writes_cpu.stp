@@ -51,7 +51,7 @@ probe python.function.return
 	{
 		if(i[tid()] > 0)
 		{
-			printf("TASK_UTIME: %d\n", cputime_to_msecs(task_utime()));
+			printf("TASK_UTIME: %d\n %s\n", cputime_to_msecs(task_utime()), task_time_string());
 			execTime =  task_utime()-times[tid(), funcname];
 			bt = getPyBacktrace(tid());
 	/*		bt = sprintf("%s:%s", filename, funcname); */
