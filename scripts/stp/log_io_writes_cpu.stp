@@ -9,7 +9,6 @@ global inLib;
 function getPyBacktrace(currentTid)
 {
 	pyBacktrace = "";
-	/*index = 0;*/
 	foreach ([tid, i2-] in backtrace) {
 		if(@count(index) < 10 & tid == currentTid)
 		{
@@ -41,7 +40,7 @@ probe python.function.entry
 		//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s (%d  %d)", filename, lineno, funcname, tid(), i[tid()]);
 		//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s", filename, lineno, funcname);
 		backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname);
-		times[tid(), funcname] = gettimeofday_us();
+		times[tid(), funcname] = task_utime();
 	}
 	/*doesIO[tid(), i[tid()]] = 0;*/
 }
@@ -52,7 +51,7 @@ probe python.function.return
 	{
 		if(i[tid()] > 0)
 		{
-			execTime =  gettimeofday_us()-times[tid(), funcname];
+			execTime =  task_utime()-times[tid(), funcname];
 			bt = getPyBacktrace(tid());
 	/*		bt = sprintf("%s:%s", filename, funcname); */
 			foreach ([tid, i2] in ioWriteCounter)
@@ -65,7 +64,6 @@ probe python.function.return
 				}
 
 			}
-		/* printf("%d,CPU,0,%s,0,%s,%d\n", gettimeofday_us(), bt, task_execname(pid2task(pid())), execTime );*/
 			totalTime[bt] <<< execTime
 
 			delete times[tid(), funcname];
