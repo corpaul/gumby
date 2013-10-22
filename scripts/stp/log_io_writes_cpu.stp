@@ -104,7 +104,7 @@ probe begin {
 	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"VALUE\",\"PROCESS\",\"CALLS\"\n");
 }
 
-probe timer.s(60){
+probe end, timer.s(60){
 	foreach ([funcname] in totalTime)
 	{
 		printf("%d,CPU,xx,%s,%d,xx,%d\n", gettimeofday_us(), funcname, @avg(totalTime[funcname]), @count(totalTime[funcname]) );
