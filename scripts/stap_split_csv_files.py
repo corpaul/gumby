@@ -6,31 +6,40 @@ Created on Aug 26, 2013
 '''
 import unicodecsv
 import sys
+import os
 from gumby.settings import loadConfig
 
+headers = {}
+headers["WRITE"] = ['TIMESTAMP', 'TYPE', 'TRACE', 'PROCESS', 'BYTES', 'FILE', 'TIME']
+headers["CPU"] = ['TIMESTAMP', 'TYPE', 'TRACE', 'PROCESS', 'BYTES', 'FILE', 'TIME', 'CALLS', 'TOTALTIME']
 
-def splitFile(csv):
-    var = []
+
+def splitFile(csv, outputPath):
     with open(csv, 'rb') as csvfile:
         reader = unicodecsv.DictReader(csvfile, delimiter=',')
-        var = []
+        output = {}
         for line in reader:
-            if line['TYPE'] == "WRITE":
-                var.append(line)
+            if line['TYPE'] not in output:
+                output[line['TYPE']] = []
+            output[line['TYPE']].append(line)
 
-    with open('/tmp/tmp.csv', 'wb') as csvfile:
-        fnames = ['TIMESTAMP', 'TYPE', 'TRACE', 'PROCESS', 'BYTES', 'FILE', 'TIME']
-        spamwriter = unicodecsv.DictWriter(csvfile, delimiter=',', fieldnames=fnames)
-        spamwriter.writerow(dict((fn, fn) for fn in fnames))
-        for line in var:
-            spamwriter.writerow(line)
+    for t in output.iterkeys():
+        print t
+        with open('%s/%s.csv' % (outputPath, t), 'wb') as csvfile:
+            fnames = headers[line['TYPE']]
+            spamwriter = unicodecsv.DictWriter(csvfile, delimiter=',', fieldnames=fnames)
+            spamwriter.writerow(dict((fn, fn) for fn in fnames))
+            for line in output[t]:
+                print line
+                spamwriter.writerow(line)
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print "Usage: python split_csv_files.py configFile csvFilename"
+    if len(sys.argv) < 4:
+        print "Usage: python split_csv_files.py configFile csvFilename outputPath"
         sys.exit(0)
 
     config = loadConfig(sys.argv[1])
     csvFilename = sys.argv[2]
+    outputPath = sys.argv[3]
 
-    splitFile(csvFilename)
+    splitFile(csvFilename, outputPath)
