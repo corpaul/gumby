@@ -9,7 +9,6 @@ global inLib;
 function getPyBacktrace(currentTid)
 {
 	pyBacktrace = "";
-	/*index = 0;*/
 	foreach ([tid, i2-] in backtrace) {
 		if(@count(index) < 10 & tid == currentTid)
 		{
@@ -41,7 +40,7 @@ probe python.function.entry
 		//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s (%d  %d)", filename, lineno, funcname, tid(), i[tid()]);
 		//backtrace[tid(), i[tid()]] = sprintf("%s:%d:%s", filename, lineno, funcname);
 		backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname);
-		times[tid(), funcname] = gettimeofday_us();
+		times[tid(), funcname] = task_utime();
 	}
 	/*doesIO[tid(), i[tid()]] = 0;*/
 }
@@ -52,7 +51,8 @@ probe python.function.return
 	{
 		if(i[tid()] > 0)
 		{
-			execTime =  gettimeofday_us()-times[tid(), funcname];
+			printf("TASK_UTIME: %d\n %s\n", cputime_to_msecs(task_utime()), task_time_string());
+			execTime =  task_utime()-times[tid(), funcname];
 			bt = getPyBacktrace(tid());
 	/*		bt = sprintf("%s:%s", filename, funcname); */
 			foreach ([tid, i2] in ioWriteCounter)
@@ -60,12 +60,11 @@ probe python.function.return
 				if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
 				{
 
-					printf("%d,WRITE,%s,%s,%d,%s,%d,xx,xx\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
+					printf("%d,WRITE,%s,%s,%d,%s,1\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())) );
 
 				}
 
 			}
-		/* printf("%d,CPU,0,%s,0,%s,%d\n", gettimeofday_us(), bt, task_execname(pid2task(pid())), execTime );*/
 			totalTime[bt] <<< execTime
 
 			delete times[tid(), funcname];
@@ -101,13 +100,13 @@ probe syscall.read.return {
 }
 */
 probe begin {
-	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\",\"CALLS\",\"TOTALTIME\"\n");
+	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"VALUE\",\"PROCESS\",\"CALLS\"\n");
 }
 
-probe timer.s(60){
+probe end, timer.s(60){
 	foreach ([funcname] in totalTime)
 	{
-		printf("%d,CPU,xx,%s,xx,xx,%d,%d,%d\n", gettimeofday_us(), funcname, @avg(totalTime[funcname]), @count(totalTime[funcname]), @sum(totalTime[funcname]) );
+		printf("%d,CPU,xx,%s,%d,xx,%d\n", gettimeofday_us(), funcname, @avg(totalTime[funcname]), @count(totalTime[funcname]) );
 	}
 	delete totalTime;
 }
