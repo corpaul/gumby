@@ -161,4 +161,5 @@ gnuplot -e "logdir='$LOGS_DIR/dst';peername='dst';plotsdir='$PLOTS_DIR'" $WORKSP
 #gnuplot -e "logdir='$LOGS_DIR';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/speed.gnuplot
 
 rm $PLOTS_DIR_LAST/*
+mkdir -p $PLOTS_DIR_LAST
 cp $PLOTS_DIR/* $PLOTS_DIR_LAST/
