@@ -22,6 +22,8 @@ fi
 
 if [ ! -d "$REPOSITORY_DIR" -a ! -z "$REPOSITORY_DIR" ]; then
     svn co "$REPOSITORY_URL" "$REPOSITORY_DIR"
+    #git clone $REPOSITORY_URL $REPOSITORY_DIR
+    #cd $REPOSITORY_DIR && git checkout origin/ppsp-prio && make
     cd $REPOSITORY_DIR && make
     cd -
 fi
@@ -137,8 +139,8 @@ sleep 5s
 # separate logs
 
 # remove temps
-#rm -rf $LFS_SRC_STORE
-#rm -rf $LFS_DST_STORE
+rm -rf $SRC_STORE
+rm -rf $DST_STORE
 # rm -rf ./src ./dst # TODO
 
 # ------------- LOG PARSING -------------
@@ -158,7 +160,7 @@ $WORKSPACE_DIR/gumby/experiments/libswift/parse_logs.py $LOGS_DIR/dst
 gnuplot -e "logdir='$LOGS_DIR/src';peername='src';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/resource_usage.gnuplot
 gnuplot -e "logdir='$LOGS_DIR/dst';peername='dst';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/resource_usage.gnuplot
 
-#gnuplot -e "logdir='$LOGS_DIR';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/speed.gnuplot
+gnuplot -e "logdir='$LOGS_DIR';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/speed.gnuplot
 
 rm -f $PLOTS_DIR_LAST/*
 cp $PLOTS_DIR/* $PLOTS_DIR_LAST/
