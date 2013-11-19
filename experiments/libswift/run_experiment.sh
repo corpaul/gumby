@@ -23,6 +23,7 @@ if [ ! -d "$EXPERIMENT_DIR" ]; then
     exit 1
 fi
 
+
 if [ ! -d "$OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME" ]; then
 	echo "Initializing LXC container in $OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME..."
 	sudo lxc-create -n debian -t debian -B dir --dir $OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME/rootfs
@@ -160,6 +161,7 @@ sleep 5s
 # separate logs
 
 # remove temps
+<<<<<<< HEAD
 #sudo rm -rf $SRC_STORE
 #sudo rm -rf $DST_STORE
 # rm -rf ./src ./dst # TODO
@@ -181,7 +183,7 @@ $WORKSPACE_DIR/gumby/experiments/libswift/parse_logs.py $LOGS_DIR/dst
 gnuplot -e "logdir='$LOGS_DIR/src';peername='src';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/resource_usage.gnuplot
 gnuplot -e "logdir='$LOGS_DIR/dst';peername='dst';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/resource_usage.gnuplot
 
-#gnuplot -e "logdir='$LOGS_DIR';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/speed.gnuplot
+gnuplot -e "logdir='$LOGS_DIR';plotsdir='$PLOTS_DIR'" $WORKSPACE_DIR/gumby/experiments/libswift/speed.gnuplot
 
 rm -f $PLOTS_DIR_LAST/*
 cp $PLOTS_DIR/* $PLOTS_DIR_LAST/
