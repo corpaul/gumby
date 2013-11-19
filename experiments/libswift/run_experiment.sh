@@ -1,30 +1,33 @@
 #!/bin/bash -xe
 
-# Run this before this script --------------------------------------------------
-    # # build libswift
-    # make -C $REPOSITORY_URL
+# TODO: setup container in script (so we can reuse the filesystem)
 
-    # # get and build LFS
-    # if [ ! -d "$DIR_LFS" ]; then
-    #     git clone git@github.com:vladum/lfs-libswift.git $DIR_LFS
-    # else
-    #     cd $DIR_LFS
-    #     git pull origin master
-    #     cd -
-    # fi
-    # make -C $DIR_LFS
-# ------------------------------------------------------------------------------
+#if [ -z "$REPOSITORY_URL" ]; then
+#    echo "ERROR: REPOSITORY_URL variable not set, bailing out. (for libswift)"
+#    exit 2
+#fi
 
-if [ -z "$REPOSITORY_URL" ]; then
-    echo "ERROR: REPOSITORY_URL variable not set, bailing out. (for libswift)"
-    exit 2
+#if [ ! -d "$REPOSITORY_DIR" -a ! -z "$REPOSITORY_DIR" ]; then
+#    svn co "$REPOSITORY_URL" "$REPOSITORY_DIR"
+#    cd $REPOSITORY_DIR && make
+#    cd -
+#fi
+
+
+EXPERIMENT_DIR=$( dirname $(readlink -f "$0"))
+if [ ! -d "$EXPERIMENT_DIR" ]; then
+    EXPERIMENT_DIR=$( dirname $(readlink -f $(which "$0")))
+fi
+if [ ! -d "$EXPERIMENT_DIR" ]; then
+    echo "Couldn't figure out where the experiment is, bailing out."
+    exit 1
 fi
 
-if [ ! -d "$REPOSITORY_DIR" -a ! -z "$REPOSITORY_DIR" ]; then
-    svn co "$REPOSITORY_URL" "$REPOSITORY_DIR"
-    cd $REPOSITORY_DIR && make
-    cd -
+if [ ! -d "$OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME" ]; then
+	echo "Initializing LXC container in $OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME..."
+	sudo lxc-create -n debian -t debian -B dir --dir $OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME/rootfs
 fi
+
 
 # Set defaults for config variables ---------------------------------------------------
 # Override these on Jenkins before running the script.
@@ -36,10 +39,13 @@ echo "Running swift processes for $EXPERIMENT_TIME seconds"
 echo "Workspace: $WORKSPACE_DIR"
 echo "Output dir: $OUTPUT_DIR"
 
-SRC_STORE=$OUTPUT_DIR/src/store
-DST_STORE=$OUTPUT_DIR/dst/store
+SRC_LXC_STORE=home/src/store
+DST_LXC_STORE=home/dst/store
 
-mkdir -p $SRC_STORE $DST_STORE
+SRC_STORE=$OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME/rootfs/$SRC_LXC_STORE
+DST_STORE=$OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME/rootfs/$DST_LXC_STORE
+
+sudo mkdir -p $SRC_STORE $DST_STORE
 
 # logging
 DATE=$(date +'%F-%H-%M')
@@ -53,7 +59,7 @@ df -h
 FILENAME=file_$FILE_SIZE.tmp
 
 # create data file
-truncate -s $FILE_SIZE $SRC_STORE/$FILENAME
+sudo truncate -s $FILE_SIZE $SRC_STORE/$FILENAME
 
 #hexdump -C -n 8192 $LFS_SRC_STORE/aaaaaaaa_128gb_8192
 
@@ -90,8 +96,29 @@ truncate -s $FILE_SIZE $SRC_STORE/$FILENAME
 mkdir -p $LOGS_DIR/src
 mkdir -p $LOGS_DIR/dst
 
-$WORKSPACE_DIR/gumby/scripts/process_guard.py -c "taskset -c 0 $REPOSITORY_DIR/swift --uprate 307200 -f $SRC_STORE/$FILENAME -l 1337 -z 8192 --progress -H" -t $EXPERIMENT_TIME -m $LOGS_DIR/src -o $LOGS_DIR/src &
-SWIFT_SRC_PID=$!
+#$WORKSPACE_DIR/gumby/scripts/process_guard.py -c "taskset -c 0 $REPOSITORY_DIR/swift --uprate 307200 -f $SRC_STORE/$FILENAME -l 1337 -z 8192 --progress -H" -t $EXPERIMENT_TIME -m $LOGS_DIR/src -o $LOGS_DIR/src &
+#SWIFT_SRC_PID=$!
+
+INIT_LXC_CMD="/home/init.sh"
+SEEDER_LXC_CMD="/home/start_seeder.sh"
+LEECHER_LXC_CMD="/home/start_leecher.sh"
+
+INIT_CMD="$OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME/rootfs/$INIT_LXC_CMD"
+SEEDER_CMD="$OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME/rootfs/$SEEDER_LXC_CMD"
+LEECHER_CMD="$OUTPUT_DIR/lxc/$LXC_CONTAINER_NAME/rootfs/$LEECHER_LXC_CMD"
+
+# copy startup scripts
+sudo cp $EXPERIMENT_DIR/init.sh $INIT_CMD
+sudo cp $EXPERIMENT_DIR/start_seeder.sh $SEEDER_CMD
+sudo cp $EXPERIMENT_DIR/start_leecher.sh $LEECHER_CMD
+sudo chmod +x $EXPERIMENT_DIR/*.sh
+
+# setup container (install lxc, libevent, libswift etc)
+sudo lxc-execute -n debian -f $EXPERIMENT_DIR/seeder_config $INIT_LXC_CMD $REPOSITORY_DIR 
+
+# start seeder
+#$WORKSPACE_DIR/gumby/scripts/process_guard.py -c "taskset -c 1 sudo lxc-execute -n seeder -f $EXPERIMENT_DIR/seeder_config $SEEDER_LXC_CMD $REPOSITORY_DIR $SRC_LXC_STORE $FILENAME" -t $(($EXPERIMENT_TIME-5)) -m $LOGS_DIR/src -o $LOGS_DIR/src &
+sudo lxc-execute -n seeder -f $EXPERIMENT_DIR/seeder_config $SEEDER_LXC_CMD $REPOSITORY_DIR /$SRC_LXC_STORE $FILENAME > $LOGS_DIR/src/src.log & 
 
 # wait for the hash to be generated
 while [ ! -f $SRC_STORE/$FILENAME.mbinmap ] ;
@@ -101,16 +128,12 @@ done
 
 HASH=$(cat $SRC_STORE/$FILENAME.mbinmap | grep hash | cut -d " " -f 3)
 
-echo $HASH
-
-#echo "Starting destination in 5s..."
-#sleep 5s
-
 echo "Starting destination..."
 # start destination swift
-#$STAP_RUN -R -o $LOGS_DIR/swift.dst.stap.out -c "taskset -c 1 EXPERIMENT_TIMEout 50s $REPOSITORY_URL/swift -o $LFS_DST_STORE -t 127.0.0.1:1337 -h $HASH -z 8192 --progress -D$LOGS_DIR/swift.dst.debug" cpu_io_mem_2.ko >$LOGS_DIR/swift.dst.log 2>&1 &
-touch $DST_STORE/$FILENAME
-$WORKSPACE_DIR/gumby/scripts/process_guard.py -c "taskset -c 1 $REPOSITORY_DIR/swift --downrate 307200 -o $DST_STORE -f $FILENAME -t 127.0.0.1:1337 -h $HASH -z 8192 --progress" -t $(($EXPERIMENT_TIME-5)) -m $LOGS_DIR/dst -o $LOGS_DIR/dst &
+
+#$WORKSPACE_DIR/gumby/scripts/process_guard.py -c "taskset -c 1 sudo lxc-execute -n leecher -f $EXPERIMENT_DIR/leecher_config $LEECHER_LXC_CMD $REPOSITORY_DIR $DST_LXC_STORE $HASH " -t $(($EXPERIMENT_TIME-5)) -m $LOGS_DIR/dst -o $LOGS_DIR/dst &
+sudo lxc-execute -n leecher -f $EXPERIMENT_DIR/leecher_config $LEECHER_LXC_CMD $REPOSITORY_DIR /$DST_LXC_STORE $HASH $NETEM_DELAY > $LOGS_DIR/dst/dst.log & 
+
 SWIFT_DST_PID=$!
 
 echo "Waiting for swifts to finish (~${EXPERIMENT_TIME}s)..."
@@ -137,8 +160,8 @@ sleep 5s
 # separate logs
 
 # remove temps
-#rm -rf $LFS_SRC_STORE
-#rm -rf $LFS_DST_STORE
+#sudo rm -rf $SRC_STORE
+#sudo rm -rf $DST_STORE
 # rm -rf ./src ./dst # TODO
 
 # ------------- LOG PARSING -------------
