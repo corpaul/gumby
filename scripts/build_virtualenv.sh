@@ -113,7 +113,7 @@ if [ ! -e $VENV/inst/.completed.$SCRIPT_VERSION ]; then
         # Build systemtap
         if [ ! -d systemtap-*/ ]; then
             if [ ! -e systemtap-*.gz ]; then
-                wget http://sourceware.org/systemtap/ftp/releases/systemtap-2.2.1.tar.gz
+                wget http://sourceware.org/systemtap/ftp/releases/systemtap-2.4.tar.gz
             fi
             tar xavf systemtap-*.gz
         fi
