@@ -44,7 +44,7 @@ if [ -z "$LOCAL_RUN" -o $(echo $USE_LOCAL_VENV | tr '[:upper:]' '[:lower:]') == 
 fi
 
 pip install -e django
-pip install -e git://github.com/django/djangobench.git#egg=djangobench
+#pip install -e git://github.com/django/djangobench.git#egg=djangobench
 
 
 #
