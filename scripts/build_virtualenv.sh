@@ -359,6 +359,9 @@ fi
 rm -f $VENV/bin/pil*
 rm -rf $VENV/lib/python2.7/site-packages/PIL
 
+# upgrade pil to latest version
+pip install pip --upgrade
+
 pip install pillow --upgrade --force-reinstall
 
 echo "
