@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 # sqlite_benchmark_setup.sh ---
 #
 # Filename: sqlite_benchmark_setup.sh
@@ -43,7 +43,7 @@ if [ -z "$LOCAL_RUN" -o $(echo $USE_LOCAL_VENV | tr '[:upper:]' '[:lower:]') == 
 build_virtualenv.sh
 fi
 
-mkdir sqlite_bld
+mkdir -p sqlite_bld
 
 # See http://www.wtfpl.net/txt/copying for license details
 # Creates a minimal manifest and manifest.uuid file so sqlite (and fossil) can build

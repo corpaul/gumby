@@ -105,7 +105,6 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     	if [ "$REPOSITORY_DIR" == "sqlite" ]; then
     		# install custom sqlite in custom dir
     		cd ..
-    		mkdir -p sqlite_bld
     		cd sqlite_bld
     		../$REPOSITORY_DIR/configure --prefix=$CUSTOM_SQLITE_PATH
     		make install
