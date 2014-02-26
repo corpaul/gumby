@@ -110,7 +110,6 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     		
     		cd ../leveldb
     		CFLAGS=-I$WORKSPACE_DIR/sqlite_inst/include CXXFLAGS=-I$WORKSPACE_DIR/sqlite_inst/include LD_FLAGS=-L$WORKSPACE_DIR/sqlite_inst/lib make db_bench_sqlite3 
-    	fi
     	else
 			rm -fR sqlite
 			pycompile $([ -z "$PYTHONOPTIMIZE" ] || echo -n "-O" ) .
