@@ -88,6 +88,8 @@ if [ "$REPOSITORY_DIR" == "sqlite" ]; then
 	GIT_LOG_CMD="--topo-order --grep=performance --quiet $STAP_RUN_REVS"
 fi 
 
+CUSTOM_SQLITE_PATH=$(readlink -e $WORKSPACE_DIR)/sqlite_inst
+
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     let COUNT=1+$COUNT
 
@@ -105,11 +107,11 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     		cd ..
     		mkdir -p sqlite_bld
     		cd sqlite_bld
-    		../$REPOSITORY_DIR/configure --prefix=$WORKSPACE_DIR/sqlite_inst
+    		../$REPOSITORY_DIR/configure --prefix=$CUSTOM_SQLITE_PATH
     		make install
     		
     		cd ../leveldb
-    		CFLAGS=-I$WORKSPACE_DIR/sqlite_inst/include CXXFLAGS=-I$WORKSPACE_DIR/sqlite_inst/include LD_FLAGS=-L$WORKSPACE_DIR/sqlite_inst/lib make db_bench_sqlite3 
+    		CFLAGS=-I$CUSTOM_SQLITE_PATH/include CXXFLAGS=-I$CUSTOM_SQLITE_PATH/include LD_FLAGS=-L$CUSTOM_SQLITE_PATH/lib make db_bench_sqlite3 
     	else
 			rm -fR sqlite
 			pycompile $([ -z "$PYTHONOPTIMIZE" ] || echo -n "-O" ) .
@@ -124,7 +126,7 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
         git checkout -- .
         git clean -fd
         rm -rf sqlite_bld
-    	rm -rf sqlite_inst    		
+    	rm -rf $CUSTOM_SQLITE_PATH    		
     done
 done
 
