@@ -90,9 +90,17 @@ fi
 CUSTOM_SQLITE_PATH=$(readlink -e $WORKSPACE_DIR)/sqlite_inst
 
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
+    cd $WORKSPACE_DIR/$REPOSITORY_DIR
     let COUNT=1+$COUNT
 
     git checkout $REV
+    
+    # See http://www.wtfpl.net/txt/copying for license details
+	# Creates a minimal manifest and manifest.uuid file so sqlite (and fossil) can build
+	git rev-parse --git-dir >/dev/null || exit 1
+	git log -1 --format=format:%ci%n | sed -e 's/ [-+].*$//;s/ /T/;s/^/D /' | tee manifest
+	git log -1 --format=format:%H | tee manifest.uuid
+    
     # TOOD make submodules configurable?
     git submodule sync
     git submodule update
