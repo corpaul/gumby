@@ -87,10 +87,11 @@ if [ "$REPOSITORY_DIR" == "sqlite" ]; then
 	GIT_LOG_CMD="--topo-order --grep=performance --quiet $STAP_RUN_REVS"
 fi 
 
+SQLITE_REPOSITORY=$(readlink -e $WORKSPACE_DIR)/$REPOSITORY_DIR
 CUSTOM_SQLITE_PATH=$(readlink -e $WORKSPACE_DIR)/sqlite_inst
 
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
-    cd $WORKSPACE_DIR/$REPOSITORY_DIR
+    cd $SQLITE_REPOSITORY
     let COUNT=1+$COUNT
 
     git checkout $REV
