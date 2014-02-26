@@ -74,8 +74,6 @@ fi
 
 ITERATION_RESULTS_FILE=$OUTPUT_DIR/rev_iter_results.log
 
-pushd $REPOSITORY_DIR
-
 COUNT=0
 
 GIT_LOG_CMD=""
