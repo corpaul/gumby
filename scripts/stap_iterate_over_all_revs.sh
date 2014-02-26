@@ -87,6 +87,7 @@ fi
 
 SQLITE_REPOSITORY=$(readlink -e $WORKSPACE_DIR)/$REPOSITORY_DIR
 CUSTOM_SQLITE_PATH=$(readlink -e $WORKSPACE_DIR)/sqlite_inst
+cd $SQLITE_REPOSITORY
 
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     cd $SQLITE_REPOSITORY
