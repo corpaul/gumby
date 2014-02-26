@@ -75,7 +75,6 @@ fi
 ITERATION_RESULTS_FILE=$OUTPUT_DIR/rev_iter_results.log
 
 pushd $REPOSITORY_DIR
-git clean -fd
 
 COUNT=0
 
