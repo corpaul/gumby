@@ -135,7 +135,5 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     done
 done
 
-popd
-
 #
 # stap_iterate_over_all_revs.sh ends here
