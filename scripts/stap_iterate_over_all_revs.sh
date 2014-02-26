@@ -84,6 +84,10 @@ if [ ! -z "$STAP_RUN_REVS" ]; then
 	GIT_LOG_CMD="--topo-order --merges --quiet $STAP_RUN_REVS"
 fi
 
+if [ "$REPOSITORY_DIR" == "sqlite" ]; then
+	GIT_LOG_CMD="--topo-order --grep=performance --quiet $STAP_RUN_REVS"
+fi 
+
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     let COUNT=1+$COUNT
 
@@ -96,8 +100,22 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     while [ $ITERATION -lt $STAP_RUN_ITERATIONS ]; do
         let ITERATION=1+$ITERATION
 
-        rm -fR sqlite
-        pycompile $([ -z "$PYTHONOPTIMIZE" ] || echo -n "-O" ) .
+    	if [ "$REPOSITORY_DIR" == "sqlite" ]; then
+    		# install custom sqlite in custom dir
+    		cd ..
+    		mkdir -p sqlite_bld
+    		cd sqlite_bld
+    		../$REPOSITORY_DIR/configure --prefix=$WORKSPACE_DIR/sqlite_inst
+    		make install
+    		
+    		cd ../leveldb
+    		CFLAGS=-I$WORKSPACE_DIR/sqlite_inst/include CXXFLAGS=-I$WORKSPACE_DIR/sqlite_inst/include LD_FLAGS=-L$WORKSPACE_DIR/sqlite_inst/lib make db_bench_sqlite3 
+    	fi
+    	else
+			rm -fR sqlite
+			pycompile $([ -z "$PYTHONOPTIMIZE" ] || echo -n "-O" ) .
+		fi
+    	
         cd ..
         [ ! -z "$PRE_PROBE_CMD" ] && $PRE_PROBE_CMD
         run_stap_probe.sh "$TEST_COMMAND" $OUTPUT_DIR/${TESTNAME}_${COUNT}_${ITERATION}_${REVISION}.csv ||:
@@ -106,6 +124,8 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
         echo $? $ITERATION $REV >> $ITERATION_RESULTS_FILE
         git checkout -- .
         git clean -fd
+        rm -rf sqlite_bld
+    	rm -rf sqlite_inst    		
     done
 done
 
