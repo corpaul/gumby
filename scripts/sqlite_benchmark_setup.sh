@@ -48,6 +48,7 @@ mkdir -p sqlite_bld
 # See http://www.wtfpl.net/txt/copying for license details
 # Creates a minimal manifest and manifest.uuid file so sqlite (and fossil) can build
 cd $REPOSITORY_DIR
+pwd
 git rev-parse --git-dir >/dev/null || exit 1
 git log -1 --format=format:%ci%n | sed -e 's/ [-+].*$//;s/ /T/;s/^/D /' | tee manifest
 git log -1 --format=format:%H | tee manifest.uuid
