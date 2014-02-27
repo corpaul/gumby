@@ -11,16 +11,18 @@ probe process("/usr/lib/x86_64-linux-gnu/libsqlite3.so.0").function("*") ?
 
 probe process("/usr/lib/x86_64-linux-gnu/libsqlite3.so.0").function("*").return
 {
+	if(ioWriteCounter[tid(), i[tid()]] > 0)
+	{
         bt = sprint_usyms(ubacktrace());
         // disable execTime as it is not accurate here anyway
         execTime = 0;
         fd = filesWritten[tid(), i[tid()]];
         printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid(), fd], bt, ioWriteCounter[tid(), i[tid()]], task_execname(pid2task(pid())), execTime );
+	}
 
-
-        // print OUT file_mem lineno bytes_out newline
-		delete ioWriteCounter;
-		i[tid()] -= 1
+    // print OUT file_mem lineno bytes_out newline
+	delete ioWriteCounter;
+	i[tid()] -= 1
 }
 
 probe syscall.open.return
