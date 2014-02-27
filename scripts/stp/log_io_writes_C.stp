@@ -1,78 +1,51 @@
-global backtrace, ioWriteCounter, filehandles, doesIO;
+global backtrace, ioWriteCounter, filehandles;
 global i;
 
 global filesWritten;
 
 
-probe process("leveldb/db_bench_sqlite3").function("*")
+probe process("/usr/lib/x86_64-linux-gnu/libsqlite3.so.0").function("*") ?
+//probe process("leveldb/db_bench_sqlite3").function("*") ?
 {
-	i[tid()] += 1
-	doesIO[tid(), i[tid()]] = 0;
-	
+        i[tid()] += 1
 }
 
 probe process("leveldb/db_bench_sqlite3").function("*").return
 {
-	if(i[tid()] > 0)
-	{
-		foreach ([tid, i2] in ioWriteCounter)
-		{
-			if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
-			{
-				//bt = sprint_usyms(ubacktrace());
-				bt = "bla";
-				// disable execTime as it is not accurate here anyway
-				execTime = 0;
+                foreach ([tid, i2] in ioWriteCounter)
+                {
+                        if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
+                        {
+                                bt = sprint_usyms(ubacktrace());
+                                // disable execTime as it is not accurate here anyway
+                                execTime = 0;
+                                printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
 
-				printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
-
-			}
+                        }
 
 
-		}
+                }
 
 
-		delete ioWriteCounter[tid(), i[tid()]];
-		i[tid()] -= 1
-
-		// print OUT file_mem lineno bytes_out newline
-	}
+                // print OUT file_mem lineno bytes_out newline
 
 }
 
 probe syscall.open.return
 {
-	fd = $return;
-	//filehandles[tid(), fd] = sprintf("%s (%d)", user_string($filename), tid());
-	filehandles[tid(), fd] = sprintf("%s", user_string($filename));
-	filesWritten[tid(), i[tid()]] = fd;
+        fd = $return;
+        //filehandles[tid(), fd] = sprintf("%s (%d)", user_string($filename), tid());
+        filehandles[tid(), fd] = sprintf("%s", user_string($filename));
+        filesWritten[tid(), i[tid()]] = fd;
 }
 
 probe syscall.write.return {
-	if ($return>0) {
-		doesIO[tid(), i[tid()]] = 1;
-		ioWriteCounter[tid(), i[tid()]] += $return;
+        if ($return>0) {
+                ioWriteCounter[tid(), i[tid()]] += $return;
 
-	}
+        }
 }
 
-/*
-probe syscall.read.return {
-	if ($return>0) {
-		ioReadCounter[tid(), i[tid()]] += $return;
-	}
-}
-*/
 probe begin {
-	printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\"\n");
+        printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\"\n");
 }
-
-
-
-/*
-probe timer.s(600)
-{
-	exit()
-}*/
-
-
