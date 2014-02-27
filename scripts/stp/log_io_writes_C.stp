@@ -3,22 +3,15 @@ global i;
 
 global filesWritten;
 
-probe process.function("*")
-{
-	printf("hello\n");
-}
 
-
-
-/*probe process("level/db_bench_sqlite3").function("*")
+probe process("level/db_bench_sqlite3").function("*")
 {
 	i[tid()] += 1
 	backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname);
 	doesIO[tid(), i[tid()]] = 0;
-	printf("hello\n");
 }
 
-probe process("level/db_bench_sqlite3").mark("function__return")
+probe process("leveldb/db_bench_sqlite3").function("*").return
 {
 	if(i[tid()] > 0)
 	{
