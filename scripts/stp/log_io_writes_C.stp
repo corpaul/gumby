@@ -3,7 +3,7 @@ global i;
 
 global filesWritten;
 
-probe process.begin
+probe process.function("*")
 {
 	printf("hello\n");
 }
