@@ -54,7 +54,7 @@ probe syscall.write.return {
 		ioWriteCounter[tid(), i[tid()]] += $return;
 
 	}
-}*/
+}
 
 /*
 probe syscall.read.return {
