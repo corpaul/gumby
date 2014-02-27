@@ -12,23 +12,24 @@ probe process("/usr/lib/x86_64-linux-gnu/libsqlite3.so.0").function("*") ?
 
 probe process("leveldb/db_bench_sqlite3").function("*").return
 {
-                foreach ([tid, i2] in ioWriteCounter)
+        foreach ([tid, i2] in ioWriteCounter)
+        {
+                if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
                 {
-                        if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
-                        {
-                                bt = sprint_usyms(ubacktrace());
-                                // disable execTime as it is not accurate here anyway
-                                execTime = 0;
-                                printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
-
-                        }
-
+                        bt = sprint_usyms(ubacktrace());
+                        // disable execTime as it is not accurate here anyway
+                        execTime = 0;
+                        printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid, filesWritten[tid, i2]], bt, ioWriteCounter[tid(), i2], task_execname(pid2task(pid())), execTime );
 
                 }
 
 
-                // print OUT file_mem lineno bytes_out newline
+        }
 
+
+        // print OUT file_mem lineno bytes_out newline
+		delete ioWriteCounter[tid(), i[tid()]];
+		i[tid()] -= 1
 }
 
 probe syscall.open.return
