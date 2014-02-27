@@ -3,14 +3,14 @@ global i;
 
 global filesWritten;
 
-probe process("db_bench_sqlite3").function.entry
+probe process("db_bench_sqlite3").function.mark("function__entry")
 {
 	i[tid()] += 1
 	backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname);
 	doesIO[tid(), i[tid()]] = 0;
 }
 
-probe process("db_bench_sqlite3").function.return
+probe process("db_bench_sqlite3").function.mark("function__return")
 {
 	if(i[tid()] > 0)
 	{
