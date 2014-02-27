@@ -21,7 +21,7 @@ probe process("/usr/lib/x86_64-linux-gnu/libsqlite3.so.0").function("*").return
 	}
 
     // print OUT file_mem lineno bytes_out newline
-	delete ioWriteCounter;
+	delete ioWriteCounter[tid(), i[tid()]];
 	i[tid()] -= 1
 }
 
