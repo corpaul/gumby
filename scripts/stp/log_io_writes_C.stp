@@ -45,7 +45,7 @@ probe process("level/db_bench_sqlite3").mark("function__return")
 		// print OUT file_mem lineno bytes_out newline
 	}
 
-}*/
+}
 
 probe syscall.open.return
 {
@@ -61,7 +61,7 @@ probe syscall.write.return {
 		ioWriteCounter[tid(), i[tid()]] += $return;
 
 	}
-}
+}*/
 
 /*
 probe syscall.read.return {
