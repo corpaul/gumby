@@ -8,7 +8,7 @@ probe process("leveldb/db_bench_sqlite3").function("*")
 {
 	i[tid()] += 1
 	doesIO[tid(), i[tid()]] = 0;
-	printf("IN %s\n", funcname);
+	
 }
 
 probe process("leveldb/db_bench_sqlite3").function("*").return
@@ -19,7 +19,7 @@ probe process("leveldb/db_bench_sqlite3").function("*").return
 		{
 			if(tid == tid() && i2 == i[tid()] && ioWriteCounter[tid, i2] > 0)
 			{
-				bt = print_usyms(ubacktrace());
+				bt = sprint_usyms(ubacktrace());
 				// disable execTime as it is not accurate here anyway
 				execTime = 0;
 
