@@ -8,6 +8,7 @@ probe process("leveldb/db_bench_sqlite3").function("*")
 {
 	i[tid()] += 1
 	doesIO[tid(), i[tid()]] = 0;
+	printf("IN %s\n", funcname);
 }
 
 probe process("leveldb/db_bench_sqlite3").function("*").return
