@@ -4,10 +4,9 @@ global i;
 global filesWritten;
 
 
-probe process("level/db_bench_sqlite3").function("*")
+probe process("leveldb/db_bench_sqlite3").function("*")
 {
 	i[tid()] += 1
-	backtrace[tid(), i[tid()]] = sprintf("%s:%s", filename, funcname);
 	doesIO[tid(), i[tid()]] = 0;
 }
 
@@ -32,7 +31,6 @@ probe process("leveldb/db_bench_sqlite3").function("*").return
 
 
 		delete ioWriteCounter[tid(), i[tid()]];
-		delete backtrace[tid(), i[tid()]];
 		i[tid()] -= 1
 
 		// print OUT file_mem lineno bytes_out newline
