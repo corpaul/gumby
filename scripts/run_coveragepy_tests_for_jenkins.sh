@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-cd coveragepy
-tox
+cd youtube-dl
+nosetests
 cd ..
 
 #cd django
