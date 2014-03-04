@@ -43,7 +43,7 @@ if [ -z "$LOCAL_RUN" -o $(echo $USE_LOCAL_VENV | tr '[:upper:]' '[:lower:]') == 
     build_virtualenv.sh
 fi
 
-pip install tox
-pip install -e coveragepy
+#pip install tox
+pip install -e youtube-dl
 
 # coveragepy_experiment_setup.sh ends here
