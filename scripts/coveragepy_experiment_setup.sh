@@ -43,8 +43,6 @@ if [ -z "$LOCAL_RUN" -o $(echo $USE_LOCAL_VENV | tr '[:upper:]' '[:lower:]') == 
     build_virtualenv.sh
 fi
 
-
-yes | pip uninstall coverage
 pip install -e coveragepy
 
 # coveragepy_experiment_setup.sh ends here
