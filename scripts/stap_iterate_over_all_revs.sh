@@ -78,7 +78,7 @@ COUNT=0
 
 GIT_LOG_CMD=""
 if [ ! -z "$STAP_RUN_REVS" ]; then
-	GIT_LOG_CMD="--topo-order --merges --quiet $STAP_RUN_REVS"
+	GIT_LOG_CMD="--topo-order --quiet $STAP_RUN_REVS"
 fi
 
 
