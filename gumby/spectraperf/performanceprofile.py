@@ -419,7 +419,7 @@ class SessionHelper(object):
                 avgValue = round(b / count, 2)
                 # perc = Decimal(line['PERC'])
                 # note: perc is unused at the moment
-                record = MonitoredStacktrace(st, b, 0, self._config, avg_value=avgValue)
+                record = MonitoredStacktrace(st, b, 0, self._config, self._conn, avg_value=avgValue)
                 s.stacktraces[st] = record
 
         return s

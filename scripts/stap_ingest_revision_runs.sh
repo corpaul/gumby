@@ -64,7 +64,7 @@ fi
 # should be unnecessary but gumby seems to re-enter a venv for post process cmd
 # so temp fix
 export OUTPUTDIR=$(readlink -f $OUTPUT_DIR_NAME)
-export CONFFILE=$(readlink -f $CONFFILE) 
+export CONFFILE=$(readlink -f $CONFFILE)
 
 if [ -z "$OUTPUTDIR" ]; then
 	echo "OUTPUTDIR not set, bailing out"
@@ -90,16 +90,16 @@ for CSV in $(ls $TESTNAME*.csv -1tr); do
     stap_store_run_in_database.py $CONFFILE $REP_DIR/summary_per_stacktrace.csv $REVISION $TESTNAME
 done
 
-for REV in $(ls *.csv | cut -f4 -d_ | uniq); do
+for REV in $(ls -v *.csv | cut -f4 -d_ | uniq); do
 	REV=$(basename $REV .csv)
 	stap_insert_revision.py $CONFFILE $REV
 	# generate_profile.py now refreshes/generates all profiles for a test case,
 	# so it is not necessary to give a revision as argument
 	stap_generate_profile.py $CONFFILE $REV $TESTNAME
 	# calc similarity
-	stap_calculate_similarity.py $CONFFILE $OUTPUTDIR $REV $TESTNAME	
+	stap_calculate_similarity.py $CONFFILE $OUTPUTDIR $REV $TESTNAME
 done
-    
+
 # make report
 mkdir -p $SIM_REPORT_NAME
 stap_make_similarity_report.py $CONFFILE $SIM_REPORT_NAME $TOOLNAME $TESTNAME

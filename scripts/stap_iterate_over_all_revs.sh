@@ -81,65 +81,46 @@ if [ ! -z "$STAP_RUN_REVS" ]; then
 	GIT_LOG_CMD="--topo-order --merges --quiet $STAP_RUN_REVS"
 fi
 
-if [ "$REPOSITORY_DIR" == "sqlite" ]; then
-	GIT_LOG_CMD="--topo-order --grep=performance --quiet $STAP_RUN_REVS"
-fi 
-
-SQLITE_REPOSITORY=$(readlink -e $WORKSPACE_DIR)/$REPOSITORY_DIR
-CUSTOM_SQLITE_PATH=$(readlink -e $WORKSPACE_DIR)/sqlite_inst
-cd $SQLITE_REPOSITORY
 
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
-    cd $SQLITE_REPOSITORY
     let COUNT=1+$COUNT
 
+	cd $REPOSITORY_DIR
+
     git checkout $REV
-    
-    # See http://www.wtfpl.net/txt/copying for license details
-	# Creates a minimal manifest and manifest.uuid file so sqlite (and fossil) can build
-	git rev-parse --git-dir >/dev/null || exit 1
-	git log -1 --format=format:%ci%n | sed -e 's/ [-+].*$//;s/ /T/;s/^/D /' | tee manifest
-	git log -1 --format=format:%H | tee manifest.uuid
-    
+
     # TOOD make submodules configurable?
     git submodule sync
     git submodule update
     export REVISION=$REV
     ITERATION=0
-    
-	if [ "$REPOSITORY_DIR" == "sqlite" ]; then
-		# install custom sqlite in custom dir
-		cd ..
-		cd sqlite_bld
-		../$REPOSITORY_DIR/configure --prefix=$CUSTOM_SQLITE_PATH
-		make install
-		
-		cd ../leveldb
-		make clean
-		CFLAGS=-I$CUSTOM_SQLITE_PATH/include CXXFLAGS=-I$CUSTOM_SQLITE_PATH/include LD_FLAGS=-L$CUSTOM_SQLITE_PATH/lib make db_bench_sqlite3 
-	else
-		rm -fR sqlite
-		pycompile $([ -z "$PYTHONOPTIMIZE" ] || echo -n "-O" ) .
-	fi
-	cd ..
-	
-    while [ $ITERATION -lt $STAP_RUN_ITERATIONS ]; do
+
+	./configure
+	make
+	make testrun
+	make tls
+	make getgroups
+	make getfsdev
+	make trimslash
+	make t_unsafe
+	make wildtest
+
+	while [ $ITERATION -lt $STAP_RUN_ITERATIONS ]; do
         let ITERATION=1+$ITERATION
-   	
-        
+
+
         [ ! -z "$PRE_PROBE_CMD" ] && $PRE_PROBE_CMD
         run_stap_probe.sh "$TEST_COMMAND" $OUTPUT_DIR/${TESTNAME}_${COUNT}_${ITERATION}_${REVISION}.csv ||:
         [ ! -z "$POST_PROBE_CMD" ] && $POST_PROBE_CMD
         cd -
         echo $? $ITERATION $REV >> $ITERATION_RESULTS_FILE
-         		
+
     done
-    
-    cd $SQLITE_REPOSITORY
+
+    cd $REPOSITORY_DIR
     git checkout -- .
     git clean -fd
-    rm -rf sqlite_bld
-	rm -rf $CUSTOM_SQLITE_PATH   
+	make clean
 done
 
 #
