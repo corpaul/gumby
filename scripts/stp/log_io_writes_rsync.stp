@@ -1,0 +1,45 @@
+global backtrace, ioWriteCounter, filehandles;
+global i;
+
+global filesWritten;
+
+
+probe process("/home/jenkins/workspace/test_systemtap_rsync_unittests/rsync/rsync").function("*") ?
+{
+        i[tid()] += 1
+}
+
+probe process("/home/jenkins/workspace/test_systemtap_rsync_unittests/rsync/rsync").function("*").return
+{
+	if(ioWriteCounter[tid(), i[tid()]] > 0)
+	{
+        bt = sprint_usyms(ubacktrace());
+        // disable execTime as it is not accurate here anyway
+        execTime = 0;
+        fd = filesWritten[tid(), i[tid()]];
+        printf("%d,WRITE,%s,%s,%d,%s,%d\n", gettimeofday_us(), filehandles[tid(), fd], bt, ioWriteCounter[tid(), i[tid()]], task_execname(pid2task(pid())), execTime );
+	}
+
+    // print OUT file_mem lineno bytes_out newline
+	delete ioWriteCounter[tid(), i[tid()]];
+	i[tid()] -= 1
+}
+
+probe syscall.open.return
+{
+        fd = $return;
+        //filehandles[tid(), fd] = sprintf("%s (%d)", user_string($filename), tid());
+        filehandles[tid(), fd] = sprintf("%s", user_string($filename));
+        filesWritten[tid(), i[tid()]] = fd;
+}
+
+probe syscall.write.return {
+        if ($return>0) {
+                ioWriteCounter[tid(), i[tid()]] += $return;
+
+        }
+}
+
+probe begin {
+        printf("\"TIMESTAMP\",\"TYPE\",\"FILE\",\"TRACE\",\"BYTES\",\"PROCESS\",\"TIME\"\n");
+}
