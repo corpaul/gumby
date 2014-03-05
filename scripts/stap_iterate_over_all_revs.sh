@@ -96,7 +96,7 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     ITERATION=0
 
 	./configure
-	make
+	make -j`cat /proc/cpuinfo | grep processor | wc -l`
 	make testrun
 	make tls
 	make getgroups
