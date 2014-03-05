@@ -81,11 +81,11 @@ if [ ! -z "$STAP_RUN_REVS" ]; then
 	GIT_LOG_CMD="--topo-order --quiet $STAP_RUN_REVS"
 fi
 
-
+cd $REPOSITORY_DIR
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     let COUNT=1+$COUNT
 
-	cd $REPOSITORY_DIR
+
 
     git checkout $REV
 
