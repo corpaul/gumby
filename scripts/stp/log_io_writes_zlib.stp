@@ -4,12 +4,12 @@ global i;
 global filesWritten;
 
 
-probe process("/home/jenkins/workspace/test_systemtap_rsync_unittests/rsync/rsync").function("*") ?
+probe process("/home/jenkins/workspace/test_systemtap_zlib_unittests/zlib/libz.so").function("*") ?
 {
         i[tid()] += 1
 }
 
-probe process("/home/jenkins/workspace/test_systemtap_rsync_unittests/rsync/rsync").function("*").return
+probe process("/home/jenkins/workspace/test_systemtap_zlib_unittests/zlib/libz.so").function("*").return
 {
 	if(ioWriteCounter[tid(), i[tid()]] > 0)
 	{
