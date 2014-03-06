@@ -4,12 +4,12 @@ global i;
 global filesWritten;
 
 
-probe process("/home/jenkins/workspace/test_systemtap_git_unittests/git/git").function("*") ?
+probe process("/home/jenkins/workspace/test_systemtap_git_unittests/libgit2/build/libgit2.so").function("*") ?
 {
         i[tid()] += 1
 }
 
-probe process("/home/jenkins/workspace/test_systemtap_git_unittests/git/git").function("*").return
+probe process("/home/jenkins/workspace/test_systemtap_git_unittests/libgit2/build/libgit2.so").function("*").return
 {
 	if(ioWriteCounter[tid(), i[tid()]] > 0)
 	{
