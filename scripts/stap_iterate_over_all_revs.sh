@@ -95,7 +95,7 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     export REVISION=$REV
     ITERATION=0
 
-	make j`cat /proc/cpuinfo | grep processor | wc -l`
+	make -j`cat /proc/cpuinfo | grep processor | wc -l`
 
 	while [ $ITERATION -lt $STAP_RUN_ITERATIONS ]; do
         let ITERATION=1+$ITERATION
