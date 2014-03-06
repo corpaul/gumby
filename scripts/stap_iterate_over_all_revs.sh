@@ -103,7 +103,7 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
 	cd build
 	cmake ..
 	cmake --build .
-
+	cd ..
 	cmake -DBUILD_CLAR=ON build/
 
 	while [ $ITERATION -lt $STAP_RUN_ITERATIONS ]; do
