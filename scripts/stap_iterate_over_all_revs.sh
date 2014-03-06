@@ -96,7 +96,7 @@ for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     ITERATION=0
 
 	./configure
-	make
+	CFLAGS=-g make
 
 	while [ $ITERATION -lt $STAP_RUN_ITERATIONS ]; do
         let ITERATION=1+$ITERATION
