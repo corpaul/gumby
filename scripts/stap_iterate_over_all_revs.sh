@@ -83,7 +83,7 @@ GIT_LOG_CMD=""
 if [ ! -z "$STAP_RUN_REVS" ]; then
 	GIT_LOG_CMD="--topo-order --quiet $STAP_RUN_REVS"
 else
-	GIT_LOG_CMD="--grep=performance"
+	GIT_LOG_CMD="--grep=performance $STAP_RUN_REVS"
 fi
 
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
