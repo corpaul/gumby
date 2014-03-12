@@ -77,7 +77,7 @@ ITERATION_RESULTS_FILE=$OUTPUT_DIR/rev_iter_results.log
 pushd $REPOSITORY_DIR
 git clean -fd
 
-COUNT=0
+COUNT=11
 
 GIT_LOG_CMD=""
 if [ ! -z "$STAP_RUN_REVS" ]; then
