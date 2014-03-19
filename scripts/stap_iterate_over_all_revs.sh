@@ -80,11 +80,11 @@ git clean -fd
 COUNT=11
 
 GIT_LOG_CMD=""
-if [ ! -z "$STAP_RUN_REVS" ]; then
-	GIT_LOG_CMD="--topo-order --quiet $STAP_RUN_REVS"
-else
+#if [ ! -z "$STAP_RUN_REVS" ]; then
+#	GIT_LOG_CMD="--topo-order --quiet $STAP_RUN_REVS"
+#else
 	GIT_LOG_CMD="--grep=performance $STAP_RUN_REVS"
-fi
+#fi
 
 for REV in $(git log $GIT_LOG_CMD | grep ^"commit " | cut -f2 -d" "); do
     let COUNT=1+$COUNT
