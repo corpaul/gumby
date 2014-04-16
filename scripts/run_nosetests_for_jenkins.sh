@@ -38,7 +38,7 @@
 # Code:
 
 
-set -e
+set -xe
 
 # @CONF_OPTION NOSE_RUN_DIR: Specify from which directory nose should run (default is $PWD)
 if [ ! -z "$NOSE_RUN_DIR" ]; then
