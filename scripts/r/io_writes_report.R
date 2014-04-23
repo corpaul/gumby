@@ -34,6 +34,8 @@ sink()
 csvData$type = 'other'
 csvData$type[grep("etilqs", csvData$FILE)] <- "temp_table"
 csvData$type[grep("db-wal", csvData$FILE)] <- "commit"
+csvData$type[grep("dispersy.db", csvData$FILE)] <- "dispersy-db"
+csvData$type[grep("tribler.sdb", csvData$FILE)] <- "tribler-db"
 csvData$type[grep("torrent", csvData$FILE)] <- "torrent"
 
 
