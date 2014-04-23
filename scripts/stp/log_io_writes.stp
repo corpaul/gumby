@@ -76,7 +76,7 @@ probe syscall.open.return
 	fd = $return;
 	//filehandles[tid(), fd] = sprintf("%s (%d)", user_string($filename), tid());
 	filehandles[tid(), fd] = sprintf("%s", user_string($filename));
-	filesWritten[tid(), i[tid()]] = fd;
+	//filesWritten[tid(), i[tid()]] = fd;
 }
 
 probe syscall.write.return {
