@@ -38,6 +38,10 @@ sudo /usr/bin/lxc-execute -n seeder \
 # check if we have to seed concurrent downloads as well; if so, start a container for this
 if $CONCURRENT_DOWNLOAD;
 then
+	mkdir -p $OUTPUT_DIR/lighttpd
+	printf server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 3000 > $OUTPUT_DIR/lighttpd/lighttpd.conf
+	truncate -s $FILESIZE $OUTPUT_DIR/lighttpd/dl.zip		
+	
 	sudo /usr/bin/lxc-execute -n concurrentDL \
 	-s lxc.network.type=veth \
 	-s lxc.network.flags=up \

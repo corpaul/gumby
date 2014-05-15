@@ -12,10 +12,5 @@ fi
 OUTPUT_DIR="$1"
 FILESIZE="$2"
 
-
-su $USERNAME -c "mkdir -p $OUTPUT_DIR/lighttpd"
-su $USERNAME -c 'printf "server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 3000" > $OUTPUT_DIR/lighttpd/lighttpd.conf'
-su $USERNAME -c "truncate -s $FILESIZE $OUTPUT_DIR/lighttpd/dl.zip"
-
 # start server
 lighttpd -D -f $OUTPUT_DIR/lighttpd/lighttpd.conf &
