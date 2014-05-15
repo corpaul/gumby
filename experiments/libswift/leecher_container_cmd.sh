@@ -78,6 +78,14 @@ else
 	fi
 	su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID"
 	su $USERNAME -c "$PROCESS_GUARD_CMD -c '${SWIFT_CMD}' -t $EXPERIMENT_TIME -o $LOGS_DIR/dst/$LEECHER_ID -m $LOGS_DIR/dst/$LEECHER_ID &"
+	
+	# @CONF_OPTION CONCURRENT_DOWNLOAD: Set to true if you want to concurrently download a file using wget.
+	if $CONCURRENT_DOWNLOAD;
+	then
+		mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent
+		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
+		sh -c "sleep $CONCURRENT_START_TIME && wget http://www.wswd.net/testdownloadfiles/200MB.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip -q" &
+	fi
 fi
 
 
