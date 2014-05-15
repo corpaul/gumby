@@ -248,8 +248,7 @@ do
 	rm -f $OUTPUT_DIR/dst/$LEECHER_ID_TMP/$HASH*
 	if $CONCURRENT_DOWNLOAD;
 	then
-		rm -f $OUTPUT_DIR/dst/$LEECHER_ID_TMP/concurrent/*
-		rmdir -p $OUTPUT_DIR/dst/$LEECHER_ID_TMP/concurrent
+		rm -f $OUTPUT_DIR/dst/$LEECHER_ID_TMP/concurrent/dl.zip		
 	fi
 done
 
