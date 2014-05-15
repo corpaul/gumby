@@ -3,10 +3,10 @@
 # %*% start_seeder.sh must be started first.
 
 
-EXPECTED_ARGS=19
+EXPECTED_ARGS=21
 if [ $# -ne $EXPECTED_ARGS ]
 then
-	echo "Usage: `basename $0` repository_dir dst_store hash netem_delay netem_packet_loss process_guard_cmd experiment_time bridge_ip seeder_ip seeder_port logs_dir leecher_id username rate_dl rate_ul iperf_test time debug_swift debug_ledbat"
+	echo "Usage: `basename $0` repository_dir dst_store hash netem_delay netem_packet_loss process_guard_cmd experiment_time bridge_ip seeder_ip seeder_port logs_dir leecher_id username rate_dl rate_ul iperf_test time debug_swift debug_ledbat concurrent_download concurrent_start_time"
 	exit 65
 fi
 
@@ -30,6 +30,8 @@ IPERF_TEST="${16}"
 TIME="${17}"
 DEBUG_SWIFT="${18}"
 DEBUG_LEDBAT="${19}"
+CONCURRENT_DOWNLOAD="${20}"
+CONCURRENT_START_TIME="${21}"
 
 # fix formatting for random variation
 NETEM_DELAY=${NETEM_DELAY/'_'/' '}
