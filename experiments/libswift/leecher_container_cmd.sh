@@ -82,7 +82,6 @@ else
 	su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID"
 	su $USERNAME -c "$PROCESS_GUARD_CMD -c '${SWIFT_CMD}' -t $EXPERIMENT_TIME -o $LOGS_DIR/dst/$LEECHER_ID -m $LOGS_DIR/dst/$LEECHER_ID &"
 	
-	# @CONF_OPTION CONCURRENT_DOWNLOAD: Set to true if you want to concurrently download a file using wget.
 	if $CONCURRENT_DOWNLOAD;
 	then
 		su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent"

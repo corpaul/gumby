@@ -36,12 +36,14 @@ sudo /usr/bin/lxc-execute -n seeder \
 	#$SEEDER_CMD $REPOSITORY_DIR /$SRC_STORE $FILENAME $PROCESS_GUARD_CMD $DATE $EXPERIMENT_TIME $BRIDGE_IP $SEEDER_PORT &
 
 # check if we have to seed concurrent downloads as well; if so, start a container for this
+# @CONF_OPTION CONCURRENT_DOWNLOAD: Set to true if you want to concurrently download a file using wget.
 if $CONCURRENT_DOWNLOAD;
 then
 	mkdir -p $OUTPUT_DIR/lighttpd
 	printf "server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 3000" > $OUTPUT_DIR/lighttpd/lighttpd.conf
 	truncate -s $CONCURRENT_FILESIZE $OUTPUT_DIR/lighttpd/dl.zip		
-	
+
+	# @CONF_OPTION CONCURRENT_IP: IP to start the httpd on.			
 	sudo /usr/bin/lxc-execute -n concurrentDL \
 	-s lxc.network.type=veth \
 	-s lxc.network.flags=up \
