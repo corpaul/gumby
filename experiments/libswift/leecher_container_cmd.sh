@@ -85,9 +85,9 @@ else
 	# @CONF_OPTION CONCURRENT_DOWNLOAD: Set to true if you want to concurrently download a file using wget.
 	if $CONCURRENT_DOWNLOAD;
 	then
-		mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent
+		su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent"
 		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
-		sleep $CONCURRENT_START_TIME && wget http://$CONCURRENT_IP:3000/dl.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip -q &
+		su $USERNAME -c "sleep $CONCURRENT_START_TIME && wget http://$CONCURRENT_IP:3000/dl.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip -q &"
 	fi
 fi
 
