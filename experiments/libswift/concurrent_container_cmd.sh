@@ -14,7 +14,7 @@ FILESIZE="$2"
 
 
 mkdir -p $OUTPUT_DIR/lighttpd
-echo "server.document-root = \"$OUTPUT_DIR/lighttpd\" \n server.port = 3000" > $OUTPUT_DIR/lighttpd/lighttpd.conf 
+printf "server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 3000" > $OUTPUT_DIR/lighttpd/lighttpd.conf 
 truncate -s $FILESIZE $OUTPUT_DIR/lighttpd/dl.zip
 
 lighttpd -D -f $OUTPUT_DIR/lighttpd/lighttpd.conf &
