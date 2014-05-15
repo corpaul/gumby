@@ -244,8 +244,11 @@ for (( i = 0 ; i < $NO_OF_LEECHERS; i++ ))
 do
 	LEECHER_ID_TMP=$(($LEECHER_ID+$i))
 	rm -f $OUTPUT_DIR/dst/$LEECHER_ID_TMP/$HASH*
-	rm -f $OUTPUT_DIR/dst/$LEECHER_ID_TMP/concurrent/*
-	rmdir -p $OUTPUT_DIR/dst/$LEECHER_ID_TMP/concurrent
+	if $CONCURRENT_DOWNLOAD;
+	then
+		rm -f $OUTPUT_DIR/dst/$LEECHER_ID_TMP/concurrent/*
+		rmdir -p $OUTPUT_DIR/dst/$LEECHER_ID_TMP/concurrent
+	fi
 done
 
 
