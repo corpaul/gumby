@@ -8,7 +8,7 @@ delay and packet loss for the leechers.
 
 ### Dependencies ###
 
-sudo apt-get install lxc bridge-utils libevent-2.0.5 aufs-tools
+sudo apt-get install lxc bridge-utils libevent-2.0.5 aufs-tools lighttpd
 
 ### LXC ###
 

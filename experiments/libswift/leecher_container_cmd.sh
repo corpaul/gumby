@@ -3,10 +3,10 @@
 # %*% start_seeder.sh must be started first.
 
 
-EXPECTED_ARGS=21
+EXPECTED_ARGS=22
 if [ $# -ne $EXPECTED_ARGS ]
 then
-	echo "Usage: `basename $0` repository_dir dst_store hash netem_delay netem_packet_loss process_guard_cmd experiment_time bridge_ip seeder_ip seeder_port logs_dir leecher_id username rate_dl rate_ul iperf_test time debug_swift debug_ledbat concurrent_download concurrent_start_time"
+	echo "Usage: `basename $0` repository_dir dst_store hash netem_delay netem_packet_loss process_guard_cmd experiment_time bridge_ip seeder_ip seeder_port logs_dir leecher_id username rate_dl rate_ul iperf_test time debug_swift debug_ledbat concurrent_download concurrent_start_time concurrent_ip"
 	exit 65
 fi
 
@@ -32,6 +32,7 @@ DEBUG_SWIFT="${18}"
 DEBUG_LEDBAT="${19}"
 CONCURRENT_DOWNLOAD="${20}"
 CONCURRENT_START_TIME="${21}"
+CONCURRENT_IP="${22}"
 
 # fix formatting for random variation
 NETEM_DELAY=${NETEM_DELAY/'_'/' '}
@@ -86,7 +87,7 @@ else
 	then
 		mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent
 		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
-		sh -c "sleep $CONCURRENT_START_TIME && wget http://www.wswd.net/testdownloadfiles/200MB.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip -q" &
+		sh -c "sleep $CONCURRENT_START_TIME && wget http://$CONCURRENT_IP:3000/dl.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip -q" &
 	fi
 fi
 

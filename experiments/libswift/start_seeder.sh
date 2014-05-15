@@ -34,3 +34,16 @@ sudo /usr/bin/lxc-execute -n seeder \
 
 
 	#$SEEDER_CMD $REPOSITORY_DIR /$SRC_STORE $FILENAME $PROCESS_GUARD_CMD $DATE $EXPERIMENT_TIME $BRIDGE_IP $SEEDER_PORT &
+
+# check if we have to seed concurrent downloads as well; if so, start a container for this
+if $CONCURRENT_DOWNLOAD;
+then
+	sudo /usr/bin/lxc-execute -n concurrentDL \
+	-s lxc.network.type=veth \
+	-s lxc.network.flags=up \
+	-s lxc.network.link=$BRIDGE_NAME \
+	-s lxc.network.ipv4=$CONCURRENT_IP/24 \
+	-s lxc.rootfs=$CONTAINER_DIR \
+	-s lxc.pts=1024 \
+	-- $WORKSPACE_DIR/$CONCURRENT_CMD $OUTPUT_DIR $CONCURRENT_FILESIZE &	
+fi
