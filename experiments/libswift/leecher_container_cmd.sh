@@ -87,8 +87,8 @@ else
 		su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent"
 		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
 		su $USERNAME -c "sleep $CONCURRENT_START_TIME"
-		su $USERNAME -c "curl http://$CONCURRENT_IP:3000/dl.zip -O $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log"
-		wait
+		su $USERNAME -c "curl http://$CONCURRENT_IP:3000/dl.zip -O $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
+		
 	fi
 fi
 
