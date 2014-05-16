@@ -1,10 +1,10 @@
 #!/bin/bash -xe
 # %*% Starts a lightweight web server in a container to seed a file of arbitrary size.
 
-EXPECTED_ARGS=5
+EXPECTED_ARGS=6
 if [ $# -ne $EXPECTED_ARGS ]
 then
-	echo "Usage: `basename $0` output_dir CONCURRENT_DELAY CONCURRENT_PACKET_LOSS CONCURRENT_RATE CONCURRENT_RATE_UL"
+	echo "Usage: `basename $0` output_dir CONCURRENT_DELAY CONCURRENT_PACKET_LOSS CONCURRENT_RATE CONCURRENT_RATE_UL USERNAME"
 	exit 65
 fi
 
@@ -14,6 +14,7 @@ NETEM_DELAY="$2"
 NETEM_PACKET_LOSS="$3"
 NETEM_RATE_DL="$4"
 NETEM_RATE_UL="$5"
+USERNAME="$6"
 
 
 
@@ -46,4 +47,4 @@ tc qdisc add dev eth0 parent 1: tbf rate $RATE_UL limit $BURST_UL burst $BURST_U
 tc qdisc show
 
 # start server
-lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &
+su $USERNAME -c "lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf -D &"
