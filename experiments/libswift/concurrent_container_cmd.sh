@@ -46,4 +46,4 @@ tc qdisc add dev eth0 parent 1: tbf rate $RATE_UL limit $BURST_UL burst $BURST_U
 tc qdisc show
 
 # start server
-lighttpd -D -f $OUTPUT_DIR/lighttpd/lighttpd.conf &
+lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &
