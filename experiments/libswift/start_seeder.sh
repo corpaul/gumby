@@ -40,7 +40,8 @@ sudo /usr/bin/lxc-execute -n seeder \
 if $CONCURRENT_DOWNLOAD;
 then
 	mkdir -p $OUTPUT_DIR/lighttpd
-	printf "server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 3000" > $OUTPUT_DIR/lighttpd/lighttpd.conf
+	printf "server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 3000\nserver.errorlog = \"$OUTPUT_DIR/errorlog\"\n"\
+		   "server.modules += (\"mod_accesslog\")\naccesslog.filename = \"$OUTPUT_DIR/accesslog\"" > $OUTPUT_DIR/lighttpd/lighttpd.conf
 	truncate -s $CONCURRENT_FILESIZE $OUTPUT_DIR/lighttpd/dl.zip		
 
 	# @CONF_OPTION CONCURRENT_IP: IP to start the httpd on.			
