@@ -48,3 +48,4 @@ tc qdisc show
 
 # start server
 su $USERNAME -c "/usr/sbin/lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf -D &"
+sleep 120
