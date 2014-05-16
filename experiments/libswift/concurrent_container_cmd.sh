@@ -48,5 +48,5 @@ tc qdisc show
 
 # start server
 #su $USERNAME -c "/usr/sbin/lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &"
-su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd &"
+su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd --l=$OUTPUT_DIR/lighttpd/twistd.log &"
 
