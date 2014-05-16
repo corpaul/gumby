@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 # %*% Executes libswift experiment. Note that build_experiment.sh should be run before this.
 # %*% Starts 1 seeder in a container and connects $NO_OF_LEECHERS leechers to it to download a file.
 
