@@ -31,22 +31,25 @@ RATE_UL=${RATE_UL[0]}
 BURST_UL=${RATE_UL[1]}
 
 # ingress traffic
-tc qdisc add dev eth0 handle ffff: ingress
-tc filter add dev eth0 parent ffff: protocol ip prio 50 \
-   u32 match ip src 0.0.0.0/0 police rate $RATE_DL \
-   burst $BURST_DL drop flowid :1
+#tc qdisc add dev eth0 handle ffff: ingress
+#tc filter add dev eth0 parent ffff: protocol ip prio 50 \
+#   u32 match ip src 0.0.0.0/0 police rate $RATE_DL \
+#   burst $BURST_DL drop flowid :1
 
 # egress traffic
-tc qdisc add dev eth0 root handle 1: netem delay $NETEM_DELAY loss $NETEM_PACKET_LOSS
+#tc qdisc add dev eth0 root handle 1: netem delay $NETEM_DELAY loss $NETEM_PACKET_LOSS
 
 # add netem stuff
-tc qdisc add dev eth0 parent 1: tbf rate $RATE_UL limit $BURST_UL burst $BURST_UL
+#tc qdisc add dev eth0 parent 1: tbf rate $RATE_UL limit $BURST_UL burst $BURST_UL
 
 # !--------------------
 
 tc qdisc show
 
+#ethtool -K eth0 tso off
+
 # start server
 #su $USERNAME -c "/usr/sbin/lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &"
-su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd --l=$OUTPUT_DIR/lighttpd/twistd.log &"
+#su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd --l=$OUTPUT_DIR/lighttpd/twistd.log &"
+su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd"
 
