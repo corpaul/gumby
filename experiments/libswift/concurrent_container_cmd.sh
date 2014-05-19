@@ -16,8 +16,6 @@ NETEM_RATE_DL="$4"
 NETEM_RATE_UL="$5"
 USERNAME="$6"
 
-
-
 # fix formatting for random variation
 # @CONF_OPTION SEEDER_DELAY: Netem delay for the seeder.
 NETEM_DELAY=${NETEM_DELAY/'_'/' '}
@@ -46,7 +44,7 @@ BURST_UL=${RATE_UL[1]}
 
 tc qdisc show
 
-route add default gw 10.0.3.1
+route add default gw 192.168.1.20
 echo nameserver 8.8.8.8 >> /etc/resolv.conf
 
 #ethtool -K eth0 tso off
