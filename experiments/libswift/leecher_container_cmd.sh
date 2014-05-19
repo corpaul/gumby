@@ -44,6 +44,9 @@ IFS='_' read -ra RATE_UL <<< "$NETEM_RATE_UL"
 RATE_UL=${RATE_UL[0]}
 BURST_UL=${RATE_UL[1]}
 
+route add default gw $BRIDGE_IP
+echo nameserver 8.8.8.8 >> /etc/resolv.conf
+
 
 # ----------------- works
 # ingress traffic
@@ -84,8 +87,6 @@ else
 
 	if $CONCURRENT_DOWNLOAD;
 	then
-		route add default gw $BRIDGE_IP
-		echo nameserver 8.8.8.8 >> /etc/resolv.conf
 
 		su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent"
 		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
