@@ -53,5 +53,5 @@ echo nameserver 8.8.8.8 >> /etc/resolv.conf
 #su $USERNAME -c "/usr/sbin/lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &"
 #su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd --l=$OUTPUT_DIR/lighttpd/twistd.log &"
 #su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd"
-su $USERNAME -c "wget http://www.wswd.net/testdownloadfiles/100MB.zip"
+su $USERNAME -c "wget http://www.wswd.net/testdownloadfiles/100MB.zip -o $OUTPUT_DIR/dst/dl.zip 2> $OUTPUT_DIR/dst/curl-log "
 
