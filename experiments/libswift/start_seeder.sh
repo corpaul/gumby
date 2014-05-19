@@ -37,20 +37,20 @@ sudo /usr/bin/lxc-execute -n seeder \
 
 # check if we have to seed concurrent downloads as well; if so, start a container for this
 # @CONF_OPTION CONCURRENT_DOWNLOAD: Set to true if you want to concurrently download a file using wget.
-if $CONCURRENT_DOWNLOAD;
-then
-	mkdir -p $OUTPUT_DIR/lighttpd
-	printf "server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 23444\nserver.errorlog = \"$OUTPUT_DIR/lighttpd/errorlog\"\n" > $OUTPUT_DIR/lighttpd/lighttpd.conf
-	printf "server.modules += (\"mod_accesslog\")\naccesslog.filename = \"$OUTPUT_DIR/lighttpd/accesslog\"\ndebug.log-request-handling = \"enable\" " >>  $OUTPUT_DIR/lighttpd/lighttpd.conf
-	truncate -s $CONCURRENT_FILESIZE $OUTPUT_DIR/lighttpd/dl.zip		
+#if $CONCURRENT_DOWNLOAD;
+#then
+	#mkdir -p $OUTPUT_DIR/lighttpd
+	#printf "server.document-root = \"$OUTPUT_DIR/lighttpd\"\nserver.port = 23444\nserver.errorlog = \"$OUTPUT_DIR/lighttpd/errorlog\"\n" > $OUTPUT_DIR/lighttpd/lighttpd.conf
+	#printf "server.modules += (\"mod_accesslog\")\naccesslog.filename = \"$OUTPUT_DIR/lighttpd/accesslog\"\ndebug.log-request-handling = \"enable\" " >>  $OUTPUT_DIR/lighttpd/lighttpd.conf
+	#truncate -s $CONCURRENT_FILESIZE $OUTPUT_DIR/lighttpd/dl.zip
 
-	# @CONF_OPTION CONCURRENT_IP: IP to start the httpd on.			
-	sudo /usr/bin/lxc-execute -n concurrentDL \
-	-s lxc.network.type=veth \
-	-s lxc.network.flags=up \
-	-s lxc.network.link=$BRIDGE_NAME \
-	-s lxc.network.ipv4=$CONCURRENT_IP/24 \
-	-s lxc.rootfs=$CONTAINER_DIR \
-	-s lxc.pts=1024 \
-	-- $WORKSPACE_DIR/$CONCURRENT_CMD $OUTPUT_DIR $CONCURRENT_DELAY $CONCURRENT_PACKET_LOSS $CONCURRENT_RATE $CONCURRENT_RATE_UL $USER &	
-fi
+	# @CONF_OPTION CONCURRENT_IP: IP to start the httpd on.
+	#	sudo /usr/bin/lxc-execute -n concurrentDL \
+	#-s lxc.network.type=veth \
+	#-s lxc.network.flags=up \
+	#-s lxc.network.link=$BRIDGE_NAME \
+	#-s lxc.network.ipv4=$CONCURRENT_IP/24 \
+	#-s lxc.rootfs=$CONTAINER_DIR \
+	#-s lxc.pts=1024 \
+	#-- $WORKSPACE_DIR/$CONCURRENT_CMD $OUTPUT_DIR $CONCURRENT_DELAY $CONCURRENT_PACKET_LOSS $CONCURRENT_RATE $CONCURRENT_RATE_UL $USER &
+#fi

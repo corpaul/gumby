@@ -46,10 +46,14 @@ BURST_UL=${RATE_UL[1]}
 
 tc qdisc show
 
+route add default gw 10.0.3.1
+echo nameserver 8.8.8.8 >> /etc/resolv.conf
+
 #ethtool -K eth0 tso off
 
 # start server
 #su $USERNAME -c "/usr/sbin/lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &"
 #su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd --l=$OUTPUT_DIR/lighttpd/twistd.log &"
-su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd"
+#su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd"
+su $USERNAME -c "wget http://www.wswd.net/testdownloadfiles/100MB.zip"
 

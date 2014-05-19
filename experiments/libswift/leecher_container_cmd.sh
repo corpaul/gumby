@@ -81,15 +81,18 @@ else
 	fi
 	su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID"
 	su $USERNAME -c "$PROCESS_GUARD_CMD -c '${SWIFT_CMD}' -t $EXPERIMENT_TIME -o $LOGS_DIR/dst/$LEECHER_ID -m $LOGS_DIR/dst/$LEECHER_ID &"
-	
+
 	if $CONCURRENT_DOWNLOAD;
 	then
+		route add default gw $BRIDGE_IP
+		echo nameserver 8.8.8.8 >> /etc/resolv.conf
+
 		su $USERNAME -c "mkdir -p $LOGS_DIR/dst/$LEECHER_ID/concurrent"
 		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
 		su $USERNAME -c "sleep $CONCURRENT_START_TIME"
-		su $USERNAME -c "curl http://$CONCURRENT_IP:8080/dl.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
-		#su $USERNAME -c "wget http://$CONCURRENT_IP:23444/dl.zip -O $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/wget_$CONCURRENT_START_TIME-log &"
-		
+		#su $USERNAME -c "curl http://$CONCURRENT_IP:8080/dl.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
+		su $USERNAME -c "curl http://www.wswd.net/testdownloadfiles/100MB.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
+
 	fi
 fi
 
