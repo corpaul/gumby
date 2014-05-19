@@ -44,8 +44,8 @@ IFS='_' read -ra RATE_UL <<< "$NETEM_RATE_UL"
 RATE_UL=${RATE_UL[0]}
 BURST_UL=${RATE_UL[1]}
 
-route add default gw $BRIDGE_IP
-echo nameserver 8.8.8.8 >> /etc/resolv.conf
+#route add default gw $BRIDGE_IP
+#echo nameserver 8.8.8.8 >> /etc/resolv.conf
 
 
 # ----------------- works
