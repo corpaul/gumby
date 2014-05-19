@@ -16,8 +16,9 @@ mkdir -p $OUTPUT_DIR/dst
 # kill previous bridge
 interface="/sys/class/net/"$BRIDGE_NAME
 if [ -d $interface ]; then
-    sudo /sbin/ifconfig $BRIDGE_NAME down 2>/dev/null 
+    sudo /sbin/ifconfig $BRIDGE_NAME down 2>/dev/null
     sudo /sbin/brctl delbr $BRIDGE_NAME 2>/dev/null
+    sudo /sbin/iptables -D FORWARD -i $BRIDGE_NAME -o eth0 -j ACCEPT 2>/dev/null
 fi
 
 # setup networking bridge
