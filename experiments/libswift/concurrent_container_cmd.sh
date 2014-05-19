@@ -44,14 +44,14 @@ BURST_UL=${RATE_UL[1]}
 
 tc qdisc show
 
-route add default gw 192.168.1.20
-echo nameserver 8.8.8.8 >> /etc/resolv.conf
+#route add default gw 192.168.1.20
+#echo nameserver 8.8.8.8 >> /etc/resolv.conf
 
 #ethtool -K eth0 tso off
 
 # start server
 #su $USERNAME -c "/usr/sbin/lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &"
 #su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd --l=$OUTPUT_DIR/lighttpd/twistd.log &"
-#su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd"
-su $USERNAME -c "wget http://www.wswd.net/testdownloadfiles/100MB.zip -o $OUTPUT_DIR/dst/dl.zip 2> $OUTPUT_DIR/dst/curl-log "
+su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd"
+#su $USERNAME -c "wget http://www.wswd.net/testdownloadfiles/100MB.zip -o $OUTPUT_DIR/dst/dl.zip 2> $OUTPUT_DIR/dst/curl-log "
 
