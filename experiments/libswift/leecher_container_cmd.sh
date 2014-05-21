@@ -51,9 +51,9 @@ echo nameserver 8.8.8.8 >> /etc/resolv.conf
 # ----------------- works
 # ingress traffic
 tc qdisc add dev eth0 handle ffff: ingress
-tc filter add dev eth0 parent ffff: protocol ip prio 50 \
-   u32 match ip src 0.0.0.0/0 police rate $RATE_DL \
-   burst $BURST_DL drop flowid :1
+tc filter add dev eth0 parent ffff: protocol ip \
+	u32 match ip src 0.0.0.0/0 police rate $RATE_DL \
+	mtu 12k burst $BURST_DL drop flowid :1
 
 # egress traffic
 tc qdisc add dev eth0 root handle 1: netem delay $NETEM_DELAY loss $NETEM_PACKET_LOSS
@@ -92,7 +92,7 @@ else
 		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
 		su $USERNAME -c "sleep $CONCURRENT_START_TIME"
 		#su $USERNAME -c "curl http://$CONCURRENT_IP:8080/dl.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
-		su $USERNAME -c "curl http://www.wswd.net/testdownloadfiles/100MB.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
+		su $USERNAME -c "curl http://download.thinkbroadband.com/100MB.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
 
 	fi
 fi
