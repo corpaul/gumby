@@ -30,9 +30,9 @@ BURST_UL=${RATE_UL[1]}
 
 # ingress traffic
 tc qdisc add dev eth0 handle ffff: ingress
-tc filter add dev eth0 parent ffff: protocol ip prio 50 \
-   u32 match ip src 0.0.0.0/0 police rate $RATE_DL \
-   burst $BURST_DL drop flowid :1
+tc filter add dev eth0 parent ffff: protocol ip \
+	u32 match ip src 0.0.0.0/0 flowid :1 \
+	police rate $RATE_DL mtu 1500 burst $BURST_DL drop
 
 # egress traffic
 tc qdisc add dev eth0 root handle 1: netem delay $NETEM_DELAY loss $NETEM_PACKET_LOSS
@@ -44,12 +44,13 @@ tc qdisc add dev eth0 parent 1: tbf rate $RATE_UL limit $BURST_UL burst $BURST_U
 
 tc qdisc show
 
-route add default gw 10.0.3.1
+route add default gw 192.168.1.20
 echo nameserver 8.8.8.8 >> /etc/resolv.conf
 
 # start server
 #su $USERNAME -c "/usr/sbin/lighttpd -f $OUTPUT_DIR/lighttpd/lighttpd.conf &"
 #su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd --l=$OUTPUT_DIR/lighttpd/twistd.log &"
 #su $USERNAME -c "twistd -n web --path=$OUTPUT_DIR/lighttpd"
-su $USERNAME -c "curl http://www.wswd.net/testdownloadfiles/100MB.zip -o $OUTPUT_DIR/dst/dl.zip 2> $OUTPUT_DIR/dst/curl-log "
-
+#su $USERNAME -c "curl http://download.thinkbroadband.com/100MB.zip -o $OUTPUT_DIR/dst/dl.zip"
+# start iperf server
+iperf -s -w 64k -u -M 2000

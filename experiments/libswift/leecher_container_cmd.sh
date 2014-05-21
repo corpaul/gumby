@@ -92,8 +92,9 @@ else
 		# @CONF_OPTION CONCURRENT_START_TIME: Time to wait before downloading the concurrent file
 		su $USERNAME -c "sleep $CONCURRENT_START_TIME"
 		#su $USERNAME -c "curl http://$CONCURRENT_IP:8080/dl.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
-		su $USERNAME -c "curl http://download.thinkbroadband.com/100MB.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
-
+		#su $USERNAME -c "curl http://download.thinkbroadband.com/100MB.zip -o $LOGS_DIR/dst/$LEECHER_ID/concurrent/dl.zip 2> $LOGS_DIR/dst/$LEECHER_ID/concurrent/curl_$CONCURRENT_START_TIME-log &"
+		# try to download some udp thingie at high speed to disturb libswift download
+		iperf -c $CONCURRENT_IP -r -w 64k -M 2000 -u -b $NETEM_RATE_DL &
 	fi
 fi
 
