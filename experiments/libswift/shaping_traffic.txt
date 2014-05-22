@@ -1,0 +1,20 @@
+To do traffic shaping on eth0, do the following:
+
+Set up an IFB device to mirror the incoming traffic on eth0:
+sudo /sbin/modprobe ifb
+sudo /sbin/ip link set dev ifb0 up
+		
+
+sudo tc qdisc add dev eth0 handle ffff: ingress
+# redirect incoming traffic for eth0 to the ifb device
+sudo tc filter add dev eth0 parent ffff: protocol ip u32 match u32 0 0 action mirred egress redirect dev ifb0
+
+# set rate limit for outbound traffic
+sudo tc qdisc add dev eth0 root handle 1: htb default 10
+sudo tc class add dev eth0 parent 1: classid 1:1 htb rate 1mbit
+sudo tc class add dev eth0 parent 1:1 classid 1:10 htb rate 1mbit
+	
+# set rate limit for inbound traffic
+sudo tc qdisc add dev ifb0 root handle 1: htb default 10
+sudo tc class add dev ifb0 parent 1: classid 1:1 htb rate 1mbit
+sudo tc class add dev ifb0 parent 1:1 classid 1:10 htb rate 1mbit
