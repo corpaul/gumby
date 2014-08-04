@@ -37,7 +37,7 @@
 
 # Code:
 
-import unittest
+import nose
 
 import sys
 import os
@@ -66,7 +66,10 @@ class TestGuiGeneral(TestGuiAsServer):
         self.startTest(do_page)
 
 if __name__ == "__main__":
-    unittest.main(testRunner=unittest.TextTestRunner(stream=sys.stdout))
+    # nose screws with the first argument so hack this a bit
+    argv = sys.argv[:]
+    argv.insert(1, "--nocapture")
+    nose.main(argv=argv)
 
 #
 # tribler_idle_run.py ends here
