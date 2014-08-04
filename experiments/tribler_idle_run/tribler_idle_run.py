@@ -66,7 +66,7 @@ class TestGuiGeneral(TestGuiAsServer):
         self.startTest(do_page)
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(testRunner=unittest.TextTestRunner(stream=sys.stdout))
 
 #
 # tribler_idle_run.py ends here
