@@ -42,7 +42,12 @@ from sys import path as pythonpath
 
 from gumby.experiments.dispersyclient import DispersyExperimentScriptClient, main
 
+from random import choice
+from string import letters
+from time import time
 import logging
+
+
 
 # TODO(emilon): Fix this crap
 pythonpath.append(path.abspath(path.join(path.dirname(__file__), '..', '..', '..', "./tribler")))
@@ -57,10 +62,16 @@ class BarterClient(DispersyExperimentScriptClient):
         self._logger = logging.getLogger()
         self._logger.error("starting BarterClient")
 
-    def registerCallbacks(self):
-        self.scenario_runner.register(self.publish, 'publish')
+    def start_dispersy(self):
+        from Tribler.community.allchannel.community import AllChannelCommunity
 
-    def publish(self, amount=1):
+        DispersyExperimentScriptClient.start_dispersy(self)
+        self._dispersy.define_auto_load(AllChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
+
+    def registerCallbacks(self):
+        self.scenario_runner.register(self.request_stats, 'request-stats')
+
+    def request_stats(self, amount=1):
         amount = int(amount)
         for _ in xrange(amount):
             self._logger.error('creating-stats-request')
