@@ -46,7 +46,7 @@ from random import choice
 from string import letters
 from time import time
 import logging
-
+from twisted.internet.task import LoopingCall
 
 
 # TODO(emilon): Fix this crap
@@ -71,12 +71,13 @@ class BarterClient(DispersyExperimentScriptClient):
     def registerCallbacks(self):
         self.scenario_runner.register(self.request_stats, 'request-stats')
 
-    def request_stats(self, amount=1):
+    def request_stats(self, candidate, amount=1):
         amount = int(amount)
         for _ in xrange(amount):
             self._logger.error('creating-stats-request')
             key = u'torrents_received'
-            self._community.create_stats_request(key)
+            self._community.create_stats_request(candidate, key)
+
 
 if __name__ == '__main__':
     BarterClient.scenario_file = "barter.scenario"
