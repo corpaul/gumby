@@ -121,6 +121,9 @@ class DispersyExperimentScriptClient(ExperimentClient):
         self.scenario_runner.parse_file()
         msg('Took %.2f to parse scenario file' % (time() - t1))
 
+    def onAllVarsReceived(self):
+        msg('All vars received: %s' % self.all_vars)
+
     def startExperiment(self):
         msg("Starting dispersy scenario experiment")
 

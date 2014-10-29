@@ -42,41 +42,34 @@ from sys import path as pythonpath
 
 from gumby.experiments.dispersyclient import DispersyExperimentScriptClient, main
 
-from random import choice
-from string import letters
-from time import time
 import logging
-from twisted.internet.task import LoopingCall
-
 
 # TODO(emilon): Fix this crap
 pythonpath.append(path.abspath(path.join(path.dirname(__file__), '..', '..', '..', "./tribler")))
 
+from Tribler.dispersy.candidate import Candidate
+from Tribler.community.bartercast4.community import BartercastStatisticTypes
 
 class BarterClient(DispersyExperimentScriptClient):
-
+#class BarterClient(AllChann):    
     def __init__(self, *argv, **kwargs):
         from Tribler.community.bartercast4.community import BarterCommunity
         DispersyExperimentScriptClient.__init__(self, *argv, **kwargs)
         self.community_class = BarterCommunity
-        self._logger = logging.getLogger()
-        self._logger.error("starting BarterClient")
+        self._logger = logging.getLogger(self.__class__.__name__)
+        self._logger.info("starting BarterClient")
 
     def start_dispersy(self):
         from Tribler.community.allchannel.community import AllChannelCommunity
-
         DispersyExperimentScriptClient.start_dispersy(self)
         self._dispersy.define_auto_load(AllChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
 
     def registerCallbacks(self):
         self.scenario_runner.register(self.request_stats, 'request-stats')
 
-    def request_stats(self, candidate, amount=1):
-        amount = int(amount)
-        for _ in xrange(amount):
-            self._logger.error('creating-stats-request')
-            key = u'torrents_received'
-            self._community.create_stats_request(candidate, key)
+    def request_stats(self, candidate_id):
+        candidate = Candidate((str(self.all_vars[candidate_id]['host']), self.all_vars[candidate_id]['port']), False)
+        self._community.create_stats_request(candidate, BartercastStatisticTypes.TORRENTS_RECEIVED)
 
 
 if __name__ == '__main__':
