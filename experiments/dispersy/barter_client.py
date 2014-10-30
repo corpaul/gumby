@@ -40,9 +40,8 @@
 from os import path
 from sys import path as pythonpath
 
-from gumby.experiments.dispersyclient import DispersyExperimentScriptClient, main
-
-import logging
+from gumby.experiments.dispersyclient import main
+from allchannel_client import AllChannelClient
 
 # TODO(emilon): Fix this crap
 pythonpath.append(path.abspath(path.join(path.dirname(__file__), '..', '..', '..', "./tribler")))
@@ -50,26 +49,29 @@ pythonpath.append(path.abspath(path.join(path.dirname(__file__), '..', '..', '..
 from Tribler.dispersy.candidate import Candidate
 from Tribler.community.bartercast4.community import BartercastStatisticTypes
 
-class BarterClient(DispersyExperimentScriptClient):
-#class BarterClient(AllChann):    
+
+class BarterClient(AllChannelClient):
     def __init__(self, *argv, **kwargs):
-        from Tribler.community.bartercast4.community import BarterCommunity
-        DispersyExperimentScriptClient.__init__(self, *argv, **kwargs)
-        self.community_class = BarterCommunity
-        self._logger = logging.getLogger(self.__class__.__name__)
-        self._logger.info("starting BarterClient")
+        AllChannelClient.__init__(self, *argv, **kwargs)
 
     def start_dispersy(self):
-        from Tribler.community.allchannel.community import AllChannelCommunity
-        DispersyExperimentScriptClient.start_dispersy(self)
-        self._dispersy.define_auto_load(AllChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
+        AllChannelClient.start_dispersy(self)
+        from Tribler.community.bartercast4.community import BarterCommunity
+        communities = self._dispersy.define_auto_load(BarterCommunity, self._my_member, (), {"integrate_with_tribler": False}, load=True)
+        for c in communities:
+            print type(c)
+            if isinstance(c, BarterCommunity):
+                self._bccommunity = c
 
     def registerCallbacks(self):
+        AllChannelClient.registerCallbacks(self)
         self.scenario_runner.register(self.request_stats, 'request-stats')
 
     def request_stats(self, candidate_id):
+        if not self._bccommunity:
+            print "problem: barter community not loaded"
         candidate = Candidate((str(self.all_vars[candidate_id]['host']), self.all_vars[candidate_id]['port']), False)
-        self._community.create_stats_request(candidate, BartercastStatisticTypes.TORRENTS_RECEIVED)
+        self._bccommunity.create_stats_request(candidate, BartercastStatisticTypes.TORRENTS_RECEIVED)
 
 
 if __name__ == '__main__':
