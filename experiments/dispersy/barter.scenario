@@ -4,11 +4,15 @@
 @0:10 reset_dispersy_statistics
 @0:10 annotate start-experiment
 @0:20 create {1}
-@0:25 join {2}
-@0:30 publish 2 {1}
-@0:30 publish 2 {1}
-@0:30 publish 2 {1}
-@0:40 request-stats 2 {1}
-@0:50 request-stats 1 {1}
-@0:70 stop_dispersy
-@0:70 stop
+@0:60 join {2}
+@0:100 publish 1 {1}
+@0:102 publish 1 {1}
+@0:104 publish 1 {1}
+@0:110 publish 1 {2}
+@0:112 publish 1 {2}
+@0:114 publish 1 {2}
+@0:140 close {1}
+@0:160 request-stats 2 {1}
+@0:160 request-stats 1 {1}
+@0:170 stop_dispersy
+@0:170 stop

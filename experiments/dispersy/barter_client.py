@@ -59,7 +59,6 @@ class BarterClient(AllChannelClient):
         from Tribler.community.bartercast4.community import BarterCommunity
         communities = self._dispersy.define_auto_load(BarterCommunity, self._my_member, (), {"integrate_with_tribler": False}, load=True)
         for c in communities:
-            print type(c)
             if isinstance(c, BarterCommunity):
                 self._bccommunity = c
 

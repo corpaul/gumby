@@ -71,6 +71,7 @@ class AllChannelClient(DispersyExperimentScriptClient):
         self.scenario_runner.register(self.join, 'join')
         self.scenario_runner.register(self.publish, 'publish')
         self.scenario_runner.register(self.post, 'post')
+        self.scenario_runner.register(self.close, 'close')
 
     def start_dispersy(self):
         from Tribler.community.channel.preview import PreviewChannelCommunity
@@ -107,9 +108,10 @@ class AllChannelClient(DispersyExperimentScriptClient):
                 return
 
     def publish(self, amount=1):
+        msg("publish")
         amount = int(amount)
         torrents = []
-        if self.my_channel:
+        if self.my_channel or self.joined_community:
             for _ in xrange(amount):
                 infohash = str(self.torrentindex)
                 infohash += ''.join(choice(letters) for _ in xrange(20 - len(infohash)))
@@ -129,7 +131,10 @@ class AllChannelClient(DispersyExperimentScriptClient):
                 self.torrentindex += 1
                 torrents.append((infohash, int(time()), name, files, trackers))
         if torrents:
-            self.my_channel._disp_create_torrents(torrents)
+            if self.my_channel:
+                self.my_channel._disp_create_torrents(torrents)
+            elif self.joined_community:
+                self.joined_community._disp_create_torrents(torrents)
 
     def post(self, amount=1):
         amount = int(amount)
@@ -137,6 +142,12 @@ class AllChannelClient(DispersyExperimentScriptClient):
             for _ in xrange(amount):
                 text = ''.join(choice(letters) for i in xrange(160))
                 self.joined_community._disp_create_comment(text, int(time()), None, None, None, None)
+
+    def close(self):
+        msg('close command received')
+        if self.my_channel:
+            msg('close')
+            self.my_channel.unload_community()
 
 
 if __name__ == '__main__':
