@@ -85,6 +85,7 @@ class AllChannelClient(DispersyExperimentScriptClient):
         msg("creating-community")
         from Tribler.community.channel.community import ChannelCommunity
         self.my_channel = ChannelCommunity.create_community(self._dispersy, self._my_member, integrate_with_tribler=False)
+        self.my_channel.set_channel_mode(ChannelCommunity.CHANNEL_OPEN)
 
         msg("creating-channel-message")
         self.my_channel._disp_create_channel(u'', u'')
@@ -146,8 +147,11 @@ class AllChannelClient(DispersyExperimentScriptClient):
     def close(self):
         msg('close command received')
         if self.my_channel:
-            msg('close')
+            msg('close-channel: %s ' % self.my_channel)
             self.my_channel.unload_community()
+        if self.joined_community:
+            msg('close-community %s ' % self.joined_community)
+            self.joined_community.unload_community()
 
 
 if __name__ == '__main__':
