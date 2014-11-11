@@ -87,6 +87,8 @@ class AllChannelClient(DispersyExperimentScriptClient):
         self.my_channel = ChannelCommunity.create_community(self._dispersy, self._my_member, integrate_with_tribler=False)
         self.my_channel.set_channel_mode(ChannelCommunity.CHANNEL_OPEN)
 
+        msg("Community created with member: %s" % self.my_channel._master_member)
+
         msg("creating-channel-message")
         self.my_channel._disp_create_channel(u'', u'')
 
@@ -105,6 +107,7 @@ class AllChannelClient(DispersyExperimentScriptClient):
 
                 msg("joining-community")
                 self.joined_community = community
+                msg("Joined community with member: %s" % self.joined_community._master_member)
                 self.join_lc.stop()
                 return
 

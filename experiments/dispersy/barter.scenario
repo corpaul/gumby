@@ -5,14 +5,14 @@
 @0:10 annotate start-experiment
 @0:20 create {1}
 @0:25 join {2}
-@0:100 publish 1 {1}
-@0:102 publish 1 {1}
-@0:104 publish 1 {1}
-@0:110 publish 1 {2}
-@0:112 publish 1 {2}
-@0:114 publish 1 {2}
-@0:140 close
-@0:160 request-stats 2 {1}
-@0:160 request-stats 1 {1}
-@0:170 stop_dispersy
-@0:170 stop
+@0:130 publish 1 {1}
+@0:132 publish 1 {1}
+@0:134 publish 1 {1}
+@0:166 publish 1 {2}
+@0:168 publish 1 {2}
+@0:170 publish 1 {2}
+@0:300 close
+@0:310 request-stats 2 {1}
+@0:310 request-stats 1 {1}
+@0:320 stop_dispersy
+@0:320 stop
