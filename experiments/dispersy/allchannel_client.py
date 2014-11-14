@@ -51,6 +51,8 @@ from gumby.experiments.dispersyclient import DispersyExperimentScriptClient, mai
 # TODO(emilon): Fix this crap
 pythonpath.append(path.abspath(path.join(path.dirname(__file__), '..', '..', '..', "./tribler")))
 
+from Tribler.community.channel.community import ChannelCommunity
+
 
 class AllChannelClient(DispersyExperimentScriptClient):
 
@@ -75,7 +77,6 @@ class AllChannelClient(DispersyExperimentScriptClient):
 
     def start_dispersy(self):
         from Tribler.community.channel.preview import PreviewChannelCommunity
-        from Tribler.community.channel.community import ChannelCommunity
 
         DispersyExperimentScriptClient.start_dispersy(self)
         self._dispersy.define_auto_load(ChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
@@ -103,10 +104,14 @@ class AllChannelClient(DispersyExperimentScriptClient):
         if cid:
             community = self._community._get_channel_community(cid)
             if community._channel_id:
-                self._community.disp_create_votecast(community.cid, 2, int(time()))
+                message = self._community.disp_create_votecast(community.cid, 2, int(time()))
 
                 msg("joining-community")
-                self.joined_community = community
+                for c in self._dispersy.get_communities():
+                    if isinstance(c, ChannelCommunity):
+                        self.joined_community = c
+                if self.joined_community is None:
+                    msg("couldn't join community")
                 msg("Joined community with member: %s" % self.joined_community._master_member)
                 self.join_lc.stop()
                 return
