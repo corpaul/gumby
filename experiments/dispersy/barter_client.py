@@ -74,7 +74,7 @@ class BarterClient(AllChannelClient):
 
 
 if __name__ == '__main__':
-    BarterClient.scenario_file = "barter.scenario"
+    BarterClient.scenario_file = "barter2.scenario"
     main(BarterClient)
 
 #
