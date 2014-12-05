@@ -66,15 +66,18 @@ class BarterClient(AllChannelClient):
         AllChannelClient.registerCallbacks(self)
         self.scenario_runner.register(self.request_stats, 'request-stats')
 
-    def request_stats(self, candidate_id):
+    def request_stats(self, candidate_id=0):
         if not self._bccommunity:
             print "problem: barter community not loaded"
-        candidate = Candidate((str(self.all_vars[candidate_id]['host']), self.all_vars[candidate_id]['port']), False)
-        self._bccommunity.create_stats_request(candidate, BartercastStatisticTypes.TORRENTS_RECEIVED)
+        # candidate = Candidate((str(self.all_vars[candidate_id]['host']), self.all_vars[candidate_id]['port']), False)
+        # self._bccommunity.create_stats_request(candidate, BartercastStatisticTypes.TORRENTS_RECEIVED)
+        for c in self.all_vars.itervalues():
+            candidate = Candidate((str(c['host']), c['port']), False)
+            self._bccommunity.create_stats_request(candidate, BartercastStatisticTypes.TORRENTS_RECEIVED)
 
 
 if __name__ == '__main__':
-    BarterClient.scenario_file = "barter2.scenario"
+    BarterClient.scenario_file = "barter10.scenario"
     main(BarterClient)
 
 #
