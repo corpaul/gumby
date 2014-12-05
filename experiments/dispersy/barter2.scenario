@@ -6,9 +6,9 @@
 @0:20 create {1}
 @0:25 join {2}
 @0:30 publish 1 {1}
-@0:124 publish 1 {2}
-@0:130 close
-@0:140 request-stats 1 {1}
-@0:140 request-stats 2 {1}
-@0:150 stop_dispersy
-@0:150 stop
+@0:94 publish 1 {2}
+@0:160 close
+@0:170 request-stats 1 {1}
+@0:170 request-stats 2 {1}
+@0:180 stop_dispersy
+@0:190 stop
