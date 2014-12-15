@@ -66,7 +66,7 @@ class AllChannelClient(DispersyExperimentScriptClient):
 
         self.join_lc = None
 
-        self.set_community_kwarg('integrate_with_tribler', False)
+        # self.set_community_kwarg('integrate_with_tribler', False)
 
     def registerCallbacks(self):
         self.scenario_runner.register(self.create, 'create')
@@ -79,13 +79,16 @@ class AllChannelClient(DispersyExperimentScriptClient):
         from Tribler.community.channel.preview import PreviewChannelCommunity
 
         DispersyExperimentScriptClient.start_dispersy(self)
-        self._dispersy.define_auto_load(ChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
-        self._dispersy.define_auto_load(PreviewChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
+        # self._dispersy.define_auto_load(ChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
+        # self._dispersy.define_auto_load(PreviewChannelCommunity, self._my_member, (), {"integrate_with_tribler": False})
+        self._dispersy.define_auto_load(ChannelCommunity, self._my_member, ())
+        self._dispersy.define_auto_load(PreviewChannelCommunity, self._my_member, ())
 
     def create(self):
         msg("creating-community")
         from Tribler.community.channel.community import ChannelCommunity
-        self.my_channel = ChannelCommunity.create_community(self._dispersy, self._my_member, integrate_with_tribler=False)
+        # self.my_channel = ChannelCommunity.create_community(self._dispersy, self._my_member, integrate_with_tribler=False)
+        self.my_channel = ChannelCommunity.create_community(self._dispersy, self._my_member)
         self.my_channel.set_channel_mode(ChannelCommunity.CHANNEL_OPEN)
 
         msg("Community created with member: %s" % self.my_channel._master_member)

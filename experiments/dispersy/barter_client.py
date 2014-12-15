@@ -59,9 +59,11 @@ class BarterClient(AllChannelClient):
         AllChannelClient.start_dispersy(self)
         if crawl:
             from Tribler.community.bartercast4.community import BarterCommunityCrawler
-            communities = self._dispersy.define_auto_load(BarterCommunityCrawler, self._my_member, (), {"integrate_with_tribler": False}, load=True)
+            # communities = self._dispersy.define_auto_load(BarterCommunityCrawler, self._my_member, (), {"integrate_with_tribler": False}, load=True)
+            communities = self._dispersy.define_auto_load(BarterCommunityCrawler, self._my_member, (), load=True)
         else:
-            communities = self._dispersy.define_auto_load(BarterCommunity, self._my_member, (), {"integrate_with_tribler": False}, load=True)
+            # communities = self._dispersy.define_auto_load(BarterCommunity, self._my_member, (), {"integrate_with_tribler": False}, load=True)
+            communities = self._dispersy.define_auto_load(BarterCommunity, self._my_member, (), load=True)
 
         for c in communities:
             if isinstance(c, BarterCommunity):
