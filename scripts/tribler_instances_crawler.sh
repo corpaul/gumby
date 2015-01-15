@@ -11,7 +11,7 @@ export PYTHONPATH=$PYTHONPATH:$PWD/tribler
 
 # start crawler
 cd tribler/Tribler			
-process_guard.py -t $PROCESS_GUARD_TIMEOUT -c 'twistd bartercast_crawler --statedir=$OUTPUT_DIR/crawler' -m $OUTPUT_DIR/crawler -o $OUTPUT_DIR/crawler &	
+process_guard.py -t $PROCESS_GUARD_TIMEOUT -c "twistd bartercast_crawler --statedir=$OUTPUT_DIR/crawler" -m $OUTPUT_DIR/crawler -o $OUTPUT_DIR/crawler &	
 	
 	
 wait
