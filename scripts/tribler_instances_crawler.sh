@@ -9,9 +9,10 @@ done
 
 export PYTHONPATH=$PYTHONPATH:$PWD/tribler
 
+mkdir -p $OUTPUT_DIR/crawler/sqlite
 # start crawler
 cd tribler/Tribler			
-twistd bartercast_crawler --statedir=$OUTPUT_DIR/crawler
+twistd -n -l- bartercast_crawler --statedir=$OUTPUT_DIR/crawler
 	
 	
 wait
