@@ -60,10 +60,14 @@ class TestGuiGeneral(TestGuiAsServer):
             if "TRIBLER_EXECUTION_TIME" in os.environ:
                 run_time = int(os.environ["TRIBLER_EXECUTION_TIME"])
             else:
-                run_time = 60*10 # Run for 10 minutes by default
+                run_time = 60 * 10  # Run for 10 minutes by default
             self.Call(run_time, end)
 
-        self.startTest(do_page)
+        if "INSTANCE_ID" in os.environ:
+            instance_id = int(os.environ["INSTANCE_ID"])
+        else:
+            instance_id = 0
+        self.startTest(do_page, statedir_id=instance_id)
 
 if __name__ == "__main__":
     unittest.main()
