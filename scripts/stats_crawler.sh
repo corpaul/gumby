@@ -6,7 +6,19 @@
 # Created: Feb 09 2015
 
 
-#isolated_tribler_network.sh &
+# start one tribler instance that has some stuff to send around
+if [ ! -z "$HOME_CRAWLER_FILE" ]; then
+	if [ -e $HOME_CRAWLER_FILE ]; then
+	    export HOME_SEED_FILE=$(readlink -f $HOME_FILE )
+	    echo "HOME_SEED_FILE set to $HOME_SEED_FILE"
+	else
+		echo "The seed file was not found."
+	fi
+else
+	echo "No seed file set."
+fi
+wrap_in_vnc.sh tribler/tribler.sh & 
+
 
 
 STATEDIR="$OUTPUT_DIR/statsCrawler"
