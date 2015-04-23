@@ -38,10 +38,12 @@ class BarterGraphs():
         rows = self.get_interactions()
         dot = Digraph(comment="Peer interactions")
         dot.graph_attr = {"overlap": "false", "splines": "true"}
-        dot.node_attr = {"label": "", "shape": "circle", "width": "0.1"}
+        # dot.node_attr = {"label": "", "shape": "circle", "width": "0.1"}
+        dot.node_attr = {"shape": "circle", "width": "0.1"}
         dot.edge_attr = {"arrowsize": "0.1", "arrowhead": "dot", "penwidth": "0.1"}
         for r in rows:
             dot.edge(self.get_peer_node(r[0]), self.get_peer_node(r[1]))
+        print self.peers
 
         return dot
 
@@ -116,30 +118,38 @@ class GenerateBarterData(AbstractBarterDataGenerator):
             self.stats.close()
 
 
-nodes = "dimitra"
-# nodes = 10
-data = u"/home/corpaul/workspace/output/%s" % nodes
+# nodes = "dimitra"
+# nodes = "gen"
+# generated_nodes = 10
+nodes = "db"
+# data = u"/home/corpaul/workspace/output/%s" % generated_nodes
+data = u"/home/corpaul/workspace/output/statsCrawler"
 print "Working directory: %s" % data
 
-if nodes == "dimitra":
-    engine = "sfdp"
-elif nodes > 10:
-    # engine = "sfdp"
-    engine = "sfdp"
-else:
-    engine = "neato"
+engine = "sfdp"
+
+# if nodes == "dimitra":
+#    engine = "sfdp"
+
+# elif nodes == "gen":
+#    if nodes > 10:
+#        engine = "sfdp"
+#    else:
+#        engine = "neato"
 
 if not os.path.exists(data):
     os.makedirs(data)
 
-if nodes == "dimitra":
-    print "Loading dimitra dataset"
-    generated_data = BCSetDimitra(data)
+if nodes == "db":
+    print "Loading from database"
 else:
-    print "Generating random data for %d nodes" % nodes
-    generated_data = GenerateBarterData(data)
-
-generated_data.generate_data(nodes)
+    if nodes == "dimitra":
+        print "Loading dimitra dataset"
+        generated_data = BCSetDimitra(data)
+    else:
+        print "Generating random data for %d nodes" % nodes
+        generated_data = GenerateBarterData(data)
+    generated_data.generate_data(nodes)
 
 # build graphs
 print "Building graph"
