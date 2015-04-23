@@ -40,7 +40,7 @@
 if [ $# -lt 2 ]; then
 	MINION=0
 else
-	MINION=$1
+	MINION=$2
 fi
 
 export DISPLAY=:$RANDOM
