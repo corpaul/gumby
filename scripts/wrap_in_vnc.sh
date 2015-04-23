@@ -37,11 +37,11 @@
 
 # Code:
 
-if [ $# -e 1 ]
-then
+if [ $# -e 1 ]; then
 	MINION = $1
 else
 	MINION = 0
+fi
 
 export DISPLAY=:$RANDOM
 
