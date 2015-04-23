@@ -37,6 +37,12 @@
 
 # Code:
 
+if [ $# -e 1 ]
+then
+	MINION = $1
+else
+	MINION = 0
+
 export DISPLAY=:$RANDOM
 
 # Looks like $TMPDIR doesn't exist in the DAS4
@@ -59,6 +65,12 @@ if [ ! -z "$HOME_SEED_FILE" ]; then
     echo "Unpacking HOME seed file..."
     cd $HOME
     tar xaf $HOME_SEED_FILE
+    # check if we have to empty the torrents directory for all nodes except the first one
+    if [ ! -z "$EMPTY_TORRENTS" ]; then
+    	if [ $MINION > 1 ]; then
+    		rm collected_torrents/*
+    	fi
+	fi
     cd -
     echo "Done"
 else
