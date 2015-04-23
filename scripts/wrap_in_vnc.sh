@@ -69,7 +69,7 @@ if [ ! -z "$HOME_SEED_FILE" ]; then
     if [ ! -z "$EMPTY_TORRENTS" ]; then
     	SKIP_NODES=1
     	if [ "$MINION" -gt "$SKIP_NODES" ]; then
-    		rm collected_torrents/*
+    		rm .Tribler/collected_torrents/*
     	fi
 	fi
     cd -
