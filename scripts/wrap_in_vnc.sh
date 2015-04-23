@@ -67,7 +67,8 @@ if [ ! -z "$HOME_SEED_FILE" ]; then
     tar xaf $HOME_SEED_FILE
     # check if we have to empty the torrents directory for all nodes except the first one
     if [ ! -z "$EMPTY_TORRENTS" ]; then
-    	if [ "$MINION" -gt 1 ]; then
+    	SKIP_NODES=1
+    	if [ "$MINION" -gt "$SKIP_NODES" ]; then
     		rm collected_torrents/*
     	fi
 	fi
